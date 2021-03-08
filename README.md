@@ -18,6 +18,8 @@ The requirements to develop are:
 - [GetNonce(addr common.Address, blockNumber *big.Int) (uint64, error)](#GetNonce)
 - [NewContract(abiString string, contractAddr ...string) (*Contract, error)](#NewContract)
 - [Call(methodName string, args ...interface{}) (interface{}, error)](#Call)
+- [EncodeABI(methodName string, args ...interface{}) ([]byte, error)](#EncodeABI)
+- [SendRawTransaction(to common.Address,amount *big.Int,gasLimit uint64,gasPrice *big.Int,data []byte) (common.Hash, error) ](#SendRawTransaction)
 
 ### NewWeb3()
 
@@ -109,7 +111,46 @@ fmt.Printf("Total supply %v\n", totalSupply)
 // => Total supply  10000000000
 ```
 
+### EncodeABI(methodName string, args ...interface{}) ([]byte, error)
 
+EncodeABI data
+
+```golang
+
+data, err := contract.EncodeABI("balanceOf", web3.Eth.Address())
+if err != nil {
+    panic(err)
+}
+fmt.Printf("Data %x\n", data)
+
+// => Data 70a08231000000000000000000000000c13a163dd812ed7eb8bb9152651054eae5ee0999 
+```
+
+### SendRawTransaction(to common.Address,amount *big.Int,gasLimit uint64,gasPrice *big.Int,data []byte) (common.Hash, error) 
+
+Send transaction
+
+```golang
+
+txHash, err := web3.Eth.SendRawTransaction(
+    common.HexToAddress(tokenAddr),
+    big.NewInt(0),
+    gasLimit,
+    web3.Utils.ToGWei(1),
+    approveInputData,
+)
+if err != nil {
+    panic(err)
+}
+fmt.Printf("Send approve tx hash %v\n", txHash)
+
+// => Send approve tx hash  0x837136c8b6f34b519c049d1cf703d3bba47d32f6801c25d83d0113bdc0e6936a 
+```
+
+## Examples
+
+- **[Chain API](./examples/chain/chain.go)**
+- **[Contract API](./examples/contract/erc20.go)**
 
 ## License
 

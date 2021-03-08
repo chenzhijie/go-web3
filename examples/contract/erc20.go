@@ -20,7 +20,7 @@ func main() {
 	}
 
 	// set default account by private key
-	privateKey := ""
+	privateKey := "610ca682d9b48e079e9017bb000a503071a158941674d304efccc68d9b8756f9"
 	kovanChainId := int64(42)
 	if err := web3.Eth.SetAccount(privateKey); err != nil {
 		panic(err)
@@ -38,6 +38,9 @@ func main() {
 		panic(err)
 	}
 	fmt.Printf("Total supply %v\n", totalSupply)
+
+	data, _ := contract.EncodeABI("balanceOf", web3.Eth.Address())
+	fmt.Printf("%x\n", data)
 
 	balance, err := contract.Call("balanceOf", web3.Eth.Address())
 	if err != nil {
