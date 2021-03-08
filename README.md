@@ -12,10 +12,12 @@ The requirements to develop are:
 ## API
 
 - [NewWeb3()](#NewWeb3)
-- [SetChainId(chainId int64)](#SetChainId(chainId int64))
+- [SetChainId(chainId int64)](#SetChainId)
 - [SetAccount(privateKey string) error](#SetAccount)
 - [GetBlockNumber()](#GetBlockNumber)
-- [GetNonce(addr common.Address, blockNumber *big.Int) (uint64, error)](#GetNonce(addr common.Address, blockNumber *big.Int) (uint64, error))
+- [GetNonce(addr common.Address, blockNumber *big.Int) (uint64, error)](#GetNonce)
+- [NewContract(abiString string, contractAddr ...string) (*Contract, error)](#NewContract)
+- [Call(methodName string, args ...interface{}) (interface{}, error)](#Call)
 
 ### NewWeb3()
 
@@ -68,6 +70,8 @@ if err != nil {
 
 ### GetNonce(addr common.Address, blockNumber *big.Int) (uint64, error)
 
+Get transaction nonce for address
+
 ```golang
 nonce, err := web3.Eth.GetNonce(web3.Eth.Address(), nil)
 if err != nil {
@@ -76,6 +80,35 @@ if err != nil {
 fmt.Println("Latest nonce: ", nonce)
 // => Latest nonce: 1 
 ```
+
+### NewContract(abiString string, contractAddr ...string) (*Contract, error)
+
+Init contract api
+
+```golang
+abiString := "" // abi string
+contractAddr := "" // contract address
+contract, err := web3.Eth.NewContract(abiString, contractAddr )
+if err != nil {
+    panic(err)
+}
+```
+
+### Call(methodName string, args ...interface{}) (interface{}, error)
+
+Contract call method
+
+```golang
+
+totalSupply, err := contract.Call("totalSupply")
+if err != nil {
+    panic(err)
+}
+fmt.Printf("Total supply %v\n", totalSupply)
+
+// => Total supply  10000000000
+```
+
 
 
 ## License
