@@ -19,7 +19,7 @@ The requirements to develop are:
 - [NewContract(abiString string, contractAddr ...string) (*Contract, error)](#NewContract)
 - [Call(methodName string, args ...interface{}) (interface{}, error)](#Call)
 - [EncodeABI(methodName string, args ...interface{}) ([]byte, error)](#EncodeABI)
-- [SendRawTransaction(to common.Address,amount *big.Int,gasLimit uint64,gasPrice *big.Int,data []byte) (common.Hash, error) ](#SendRawTransaction)
+- [SendRawTransaction(to common.Address,amount *big.Int,gasLimit uint64,gasPrice *big.Int,data []byte) (common.Hash, error) ](#sendrawtransactionto-commonaddressamount-bigintgaslimit-uint64gasprice-bigintdata-byte-commonhash-error)
 
 ### NewWeb3()
 
