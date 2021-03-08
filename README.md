@@ -12,13 +12,13 @@ The requirements to develop are:
 ## API
 
 - [NewWeb3()](#NewWeb3)
-- [SetChainId(chainId int64)](#SetChainId)
-- [SetAccount(privateKey string) error](#SetAccount)
+- [SetChainId(chainId int64)](#setchainidchainid-int64)
+- [SetAccount(privateKey string) error](#setaccountprivatekey-string-error)
 - [GetBlockNumber()](#GetBlockNumber)
-- [GetNonce(addr common.Address, blockNumber *big.Int) (uint64, error)](#GetNonce)
-- [NewContract(abiString string, contractAddr ...string) (*Contract, error)](#NewContract)
-- [Call(methodName string, args ...interface{}) (interface{}, error)](#Call)
-- [EncodeABI(methodName string, args ...interface{}) ([]byte, error)](#EncodeABI)
+- [GetNonce(addr common.Address, blockNumber *big.Int) (uint64, error)](#getnonceaddr-commonaddress-blocknumber-bigint-uint64-error)
+- [NewContract(abiString string, contractAddr ...string) (*Contract, error)](#newcontractabistring-string-contractaddr-string-contract-error)
+- [Call(methodName string, args ...interface{}) (interface{}, error)](#callmethodname-string-args-interface-interface-error)
+- [EncodeABI(methodName string, args ...interface{}) ([]byte, error)](#encodeabimethodname-string-args-interface-byte-error)
 - [SendRawTransaction(to common.Address,amount *big.Int,gasLimit uint64,gasPrice *big.Int,data []byte) (common.Hash, error) ](#sendrawtransactionto-commonaddressamount-bigintgaslimit-uint64gasprice-bigintdata-byte-commonhash-error)
 
 ### NewWeb3()
