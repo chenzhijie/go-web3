@@ -5,16 +5,17 @@ Ethereum Golang API
 ## Development Environment
 The requirements to develop are:
 
-- [Golang](https://golang.org/doc/install) version 1.11 or later
+- [Golang](https://golang.org/doc/install) version 1.14 or later
 
 
 
 ## API
 
 - [NewWeb3()](#NewWeb3)
-- [SetChainId(chainId int64)](#SetChainId)
+- [SetChainId(chainId int64)](#SetChainId(chainId int64))
 - [SetAccount(privateKey string) error](#SetAccount)
 - [GetBlockNumber()](#GetBlockNumber)
+- [GetNonce(addr common.Address, blockNumber *big.Int) (uint64, error)](#GetNonce(addr common.Address, blockNumber *big.Int) (uint64, error))
 
 ### NewWeb3()
 
@@ -35,12 +36,6 @@ if err != nil {
 Get current block number.
 
 ```golang
-// change to your rpc provider
-var infuraURL = "https://mainnet.infura.io/v3/7238211010344719ad14a89db874158c"
-web3, err := web3.NewWeb3(infuraURL)
-if err != nil {
-    panic(err)
-}
 blockNumber, err := web3.Eth.GetBlockNumber()
 if err != nil {
     panic(err)
@@ -55,12 +50,6 @@ fmt.Println("Current block number: ", blockNumber)
 Setup chainId for different network.
 
 ```golang
-// change to your rpc provider
-var infuraURL = "https://mainnet.infura.io/v3/7238211010344719ad14a89db874158c"
-web3, err := web3.NewWeb3(infuraURL)
-if err != nil {
-    panic(err)
-}
 web3.Eth.SetChainId(1)
 ```
 
@@ -70,17 +59,23 @@ web3.Eth.SetChainId(1)
 Setup default account with privateKey (hex format)
 
 ```golang
-// change to your rpc provider
-web3, err := web3.NewWeb3(infuraURL)
-if err != nil {
-    panic(err)
-}
 err := web3.Eth.SetAccount("610ca682d9b48e079e9017bb000a503071a158941674d304efccc68d9b8756f9")
 if err != nil {
     panic(err)
 }
 ```
 
+
+### GetNonce(addr common.Address, blockNumber *big.Int) (uint64, error)
+
+```golang
+nonce, err := web3.Eth.GetNonce(web3.Eth.Address(), nil)
+if err != nil {
+    panic(err)
+}
+fmt.Println("Latest nonce: ", nonce)
+// => Latest nonce: 1 
+```
 
 
 ## License
