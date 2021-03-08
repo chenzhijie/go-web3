@@ -1,7 +1,6 @@
 package types
 
 import (
-	"fmt"
 	"math/big"
 
 	"github.com/ethereum/go-ethereum/common"
@@ -18,10 +17,13 @@ type CallMsgBigInt big.Int
 
 func (a CallMsgBigInt) MarshalText() ([]byte, error) {
 	b := big.Int(a)
-	return []byte(fmt.Sprintf("0x%x", &b)), nil
+	return []byte(hexutil.EncodeBig(&b)), nil
 }
 
 func NewCallMsgBigInt(v *big.Int) CallMsgBigInt {
+	if v == nil {
+		return CallMsgBigInt(*big.NewInt(0))
+	}
 	i := *v
 	return CallMsgBigInt(i)
 }

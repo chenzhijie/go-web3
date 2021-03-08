@@ -1,21 +1,24 @@
 package eth
 
 import (
+	"bytes"
+	"errors"
 	"fmt"
 
-	"github.com/chenzhijie/go-web3/abi"
 	"github.com/chenzhijie/go-web3/rpc"
 	"github.com/chenzhijie/go-web3/types"
+	"github.com/ethereum/go-ethereum/accounts/abi"
 	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/common/hexutil"
 )
 
 type Contract struct {
-	abi      *abi.ABI
+	abi      abi.ABI
 	addr     common.Address
 	provider *rpc.Client
 }
 
-func (c *Contract) Methods(methodName string) *abi.Method {
+func (c *Contract) Methods(methodName string) abi.Method {
 	m, _ := c.abi.Methods[methodName]
 	return m
 }
@@ -24,16 +27,15 @@ func (c *Contract) Address() common.Address {
 	return c.addr
 }
 
-func (c *Contract) Call(methodName string, args ...interface{}) (string, error) {
-	m := c.Methods(methodName)
-	if m == nil {
-		return "", fmt.Errorf("method %v not found", methodName)
-	}
-	data, err := m.EncodeABI(args...)
+func (c *Contract) Call(methodName string, args ...interface{}) (interface{}, error) {
+
+	data, err := c.EncodeABI(methodName, args...)
+
 	if err != nil {
-		return "", err
+		return nil, err
 	}
-	// fmt.Printf("data %x\n", data)
+
+	// fmt.Printf("methodName %v, data %x\n", methodName, data)
 	msg := &types.CallMsg{
 		To:   c.addr,
 		Data: data,
@@ -42,14 +44,44 @@ func (c *Contract) Call(methodName string, args ...interface{}) (string, error) 
 
 	var out string
 	if err := c.provider.Call("eth_call", &out, msg, "latest"); err != nil {
-		return "", err
+		return nil, err
 	}
-	return out, nil
 
+	outputBytes, err := hexutil.Decode(out)
+	if err != nil {
+		return nil, err
+	}
+	// fmt.Printf("outputBytes %v\n", outputBytes)
+
+	response, err := c.abi.Unpack(methodName, outputBytes)
+	if err != nil {
+		return nil, err
+	}
+	if len(response) != 1 {
+		return nil, fmt.Errorf("invalid response %v", response)
+	}
+	return response[0], nil
 }
 
-func (e *Eth) NewContract(abiString string, contractAddr ...string) (*Contract, error) {
-	a, err := abi.NewABI(abiString)
+func (c *Contract) EncodeABI(methodName string, args ...interface{}) ([]byte, error) {
+	m := c.Methods(methodName)
+	if len(m.ID) == 0 {
+		return nil, fmt.Errorf("method %v not found", methodName)
+	}
+	data := m.ID
+
+	inputData, err := m.Inputs.Pack(args...)
+	if err != nil {
+		return nil, err
+	}
+	return append(data, inputData...), nil
+}
+
+func NewContract(abiString string, contractAddr ...string) (*Contract, error) {
+	if len(abiString) == 0 {
+		return nil, errors.New("invalid abi json string")
+	}
+	a, err := abi.JSON(bytes.NewReader([]byte(abiString)))
 	if err != nil {
 		return nil, err
 	}
@@ -59,9 +91,18 @@ func (e *Eth) NewContract(abiString string, contractAddr ...string) (*Contract, 
 		addr = common.HexToAddress(contractAddr[0])
 	}
 	c := &Contract{
-		abi:      a,
-		addr:     addr,
-		provider: e.c,
+		abi:  a,
+		addr: addr,
 	}
+	return c, nil
+}
+
+func (e *Eth) NewContract(abiString string, contractAddr ...string) (*Contract, error) {
+	c, err := NewContract(abiString, contractAddr...)
+	if err != nil {
+		return nil, err
+	}
+	c.provider = e.c
+
 	return c, nil
 }

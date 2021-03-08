@@ -7,7 +7,7 @@ import (
 )
 
 func main() {
-	var infuraURL = "https://kovan.infura.io/v3/68ee32bee1584c37a4fe742846dc9772"
+	var infuraURL = "https://kovan.infura.io/v3/"
 	web3, err := web3.NewWeb3(infuraURL)
 	if err != nil {
 		panic(err)

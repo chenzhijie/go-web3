@@ -3,6 +3,8 @@ package eth
 import (
 	"fmt"
 	"math/big"
+	"sync/atomic"
+	"time"
 
 	"github.com/ethereum/go-ethereum/common"
 	eTypes "github.com/ethereum/go-ethereum/core/types"
@@ -74,17 +76,45 @@ func (e *Eth) SyncSendRawTransaction(
 		return nil, err
 	}
 
-	fmt.Printf("hash %v\n", hash)
+	// fmt.Printf("hash %v\n", hash)
 
-	for {
-		receipt, err := e.GetTransactionReceipt(hash)
-		if err != nil {
-			if err.Error() != "not found" {
-				return nil, err
+	type ReceiptCh struct {
+		ret *eTypes.Receipt
+		err error
+	}
+
+	var timeoutFlag int32
+	ch := make(chan *ReceiptCh, 1)
+
+	go func() {
+		for {
+			receipt, err := e.GetTransactionReceipt(hash)
+			if err != nil && err.Error() != "not found" {
+				ch <- &ReceiptCh{
+					err: err,
+				}
+				break
+			}
+			if receipt != nil {
+				ch <- &ReceiptCh{
+					ret: receipt,
+					err: nil,
+				}
+				break
+			}
+			if atomic.LoadInt32(&timeoutFlag) == 1 {
+				break
 			}
 		}
-		if receipt != nil {
-			return receipt, nil
-		}
+		// fmt.Println("send tx done")
+	}()
+
+	select {
+	case result := <-ch:
+		return result.ret, result.err
+	case <-time.After(time.Duration(e.txPollTimeout) * time.Second):
+		atomic.StoreInt32(&timeoutFlag, 1)
+		return nil, fmt.Errorf("Transaction was not mined within %v seconds, "+
+			"please make sure your transaction was properly sent. Be aware that it might still be mined!", e.txPollTimeout)
 	}
 }

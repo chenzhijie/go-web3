@@ -51,7 +51,7 @@ func main() {
 	}
 
 	fmt.Printf("Allowance is %v\n", allowance)
-	approveInputData, err := contract.Methods("approve").EncodeABI("0x0000000000000000000000000000000000000002", web3.Utils.ToWei(0.2))
+	approveInputData, err := contract.Methods("approve").Inputs.Pack("0x0000000000000000000000000000000000000002", web3.Utils.ToWei(0.2))
 	if err != nil {
 		panic(err)
 	}

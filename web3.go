@@ -33,11 +33,3 @@ func (w *Web3) Version() (string, error) {
 	err := w.c.Call("web3_clientVersion", &out)
 	return out, err
 }
-
-func (w *Web3) Sha3Call(val []byte) ([]byte, error) {
-	var out string
-	if err := w.c.Call("web3_sha3", &out, utils.EncodeToHex(val)); err != nil {
-		return nil, err
-	}
-	return utils.ParseHexBytes(out)
-}

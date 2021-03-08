@@ -18,14 +18,17 @@ import (
 
 // Eth is the eth namespace
 type Eth struct {
-	c          *rpc.Client
-	privateKey *ecdsa.PrivateKey
-	address    common.Address
-	chainId    *big.Int
+	c             *rpc.Client
+	privateKey    *ecdsa.PrivateKey
+	address       common.Address
+	chainId       *big.Int
+	txPollTimeout int
 }
 
 func NewEth(c *rpc.Client) *Eth {
-	return &Eth{c: c}
+	return &Eth{
+		c: c,
+	}
 }
 
 func (e *Eth) SetAccount(privateKey string) error {
@@ -40,7 +43,7 @@ func (e *Eth) SetAccount(privateKey string) error {
 	e.privateKey = privKey
 
 	addr := crypto.PubkeyToAddress(privKey.PublicKey)
-	fmt.Println("addr ", addr)
+	// fmt.Println("addr ", addr)
 	copy(e.address[:], addr[:])
 
 	return nil
@@ -48,6 +51,15 @@ func (e *Eth) SetAccount(privateKey string) error {
 
 func (e *Eth) SetChainId(chainId int64) {
 	e.chainId = big.NewInt(chainId)
+}
+
+func (e *Eth) SetTxPollTimeout(timeout int) {
+	if timeout == 0 {
+		// default tx poll timeout is 720s
+		e.txPollTimeout = 720
+		return
+	}
+	e.txPollTimeout = timeout
 }
 
 func (e *Eth) Accounts() ([]common.Address, error) {
@@ -154,11 +166,17 @@ func (e *Eth) EstimateGas(msg *types.CallMsg) (uint64, error) {
 }
 
 func (e *Eth) ChainID() (*big.Int, error) {
+	if e.chainId != nil {
+		return e.chainId, nil
+	}
 	var out string
 	if err := e.c.Call("eth_chainId", &out); err != nil {
 		return nil, err
 	}
 	return utils.ParseBigInt(out), nil
+}
+
+func (e *Eth) EncodeParams() {
 }
 
 func toBlockNumArg(number *big.Int) string {
