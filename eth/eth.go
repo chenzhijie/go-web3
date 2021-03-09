@@ -104,6 +104,12 @@ func (e *Eth) SendTransaction(txn *eTypes.Transaction) (common.Hash, error) {
 	return hash, err
 }
 
+func (e *Eth) GetTransactionByHash(hash common.Hash) (*eTypes.Transaction, error) {
+	var tx *eTypes.Transaction
+	err := e.c.Call("eth_getTransactionByHash", &tx, hash)
+	return tx, err
+}
+
 func (e *Eth) GetTransactionReceipt(hash common.Hash) (*eTypes.Receipt, error) {
 	var receipt *eTypes.Receipt
 	err := e.c.Call("eth_getTransactionReceipt", &receipt, hash)
