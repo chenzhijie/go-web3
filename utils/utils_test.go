@@ -11,12 +11,19 @@ import (
 
 func TestToWei(t *testing.T) {
 	ethVal := 0.003
-
 	u := NewUtils()
-
 	wei := u.ToWei(ethVal)
 	fmt.Printf("wei %v\n", wei)
 	fmt.Printf("wei hex %v\n", u.ToHex(wei))
+}
+
+func TestFromWei(t *testing.T) {
+	ethVal := 0.00000001
+	u := NewUtils()
+	wei := u.ToWei(ethVal)
+	fmt.Printf("wei %v\n", wei)
+	gwei := u.FromWeiWithUnit(wei, EtherUnitGWei)
+	fmt.Printf("gwei %.4f\n", gwei)
 }
 
 func TestSignMethod(t *testing.T) {

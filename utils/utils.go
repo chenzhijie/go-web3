@@ -8,6 +8,19 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 )
 
+type EtherUnit int
+
+const (
+	EtherUnitNoEther EtherUnit = iota
+	EtherUnitWei
+	EtherUnitKWei
+	EtherUnitMWei
+	EtherUnitGWei
+	EtherUnitSzabo
+	EtherUnitFinney
+	EtherUnitEther
+)
+
 type Utils struct{}
 
 func NewUtils() *Utils {
@@ -40,6 +53,37 @@ func (u *Utils) ToWei(val float64) *big.Int {
 	bigval.Int(result) // store converted number in result
 
 	return result
+}
+
+func (u *Utils) FromWeiWithUnit(wei *big.Int, unit EtherUnit) *big.Float {
+	unitInt := 0
+	switch unit {
+	case EtherUnitNoEther:
+		unitInt = 0
+	case EtherUnitWei:
+		unitInt = 1
+	case EtherUnitKWei:
+		unitInt = 3
+	case EtherUnitMWei:
+		unitInt = 6
+	case EtherUnitGWei:
+		unitInt = 9
+	case EtherUnitSzabo:
+		unitInt = 12
+	case EtherUnitFinney:
+		unitInt = 15
+	case EtherUnitEther:
+		unit = 18
+	}
+	exp := new(big.Int).Exp(big.NewInt(10), big.NewInt(int64(unitInt)), nil)
+	expF := new(big.Float)
+	expF.SetInt(exp)
+
+	bigval := new(big.Float)
+	bigval.SetUint64(wei.Uint64())
+
+	ret := bigval.Quo(bigval, expF)
+	return ret
 }
 
 func (u *Utils) ToGWei(val float64) *big.Int {
