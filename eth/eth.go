@@ -146,7 +146,7 @@ func (e *Eth) GasPrice() (uint64, error) {
 
 func (e *Eth) Call(msg *types.CallMsg, block *big.Int) (string, error) {
 	var out string
-	if err := e.c.Call("eth_call", &out, msg, block.String()); err != nil {
+	if err := e.c.Call("eth_call", &out, msg, toBlockNumArg(block)); err != nil {
 		return "", err
 	}
 	return out, nil

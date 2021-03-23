@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
+	"math/big"
 
 	"github.com/chenzhijie/go-web3/rpc"
 	"github.com/chenzhijie/go-web3/types"
@@ -35,12 +36,10 @@ func (c *Contract) Call(methodName string, args ...interface{}) (interface{}, er
 		return nil, err
 	}
 
-	// fmt.Printf("methodName %v, data %x\n", methodName, data)
 	msg := &types.CallMsg{
 		To:   c.addr,
 		Data: data,
 	}
-	// fmt.Printf("msg %v\n", msg)
 
 	var out string
 	if err := c.provider.Call("eth_call", &out, msg, "latest"); err != nil {
@@ -51,7 +50,6 @@ func (c *Contract) Call(methodName string, args ...interface{}) (interface{}, er
 	if err != nil {
 		return nil, err
 	}
-	// fmt.Printf("outputBytes %v\n", outputBytes)
 
 	response, err := c.abi.Unpack(methodName, outputBytes)
 	if err != nil {
@@ -61,6 +59,48 @@ func (c *Contract) Call(methodName string, args ...interface{}) (interface{}, er
 		return nil, fmt.Errorf("invalid response %v", response)
 	}
 	return response[0], nil
+}
+
+func (c *Contract) CallWithFromAndValue(
+	methodName string,
+	from common.Address,
+	value *big.Int,
+	args ...interface{},
+) ([]interface{}, error) {
+
+	data, err := c.EncodeABI(methodName, args...)
+
+	if err != nil {
+		return nil, err
+	}
+
+	msg := &types.CallMsg{
+		From: from,
+		To:   c.addr,
+		Data: data,
+	}
+	if value != nil {
+		msg.Value = types.NewCallMsgBigInt(value)
+	}
+
+	var out string
+	if err := c.provider.Call("eth_call", &out, msg, "latest"); err != nil {
+		return nil, err
+	}
+
+	outputBytes, err := hexutil.Decode(out)
+	if err != nil {
+		return nil, err
+	}
+
+	response, err := c.abi.Unpack(methodName, outputBytes)
+	if err != nil {
+		return nil, err
+	}
+	if len(response) == 0 {
+		return nil, fmt.Errorf("invalid response %v", response)
+	}
+	return nil, nil
 }
 
 func (c *Contract) EncodeABI(methodName string, args ...interface{}) ([]byte, error) {
