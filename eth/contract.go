@@ -100,7 +100,7 @@ func (c *Contract) CallWithFromAndValue(
 	if len(response) == 0 {
 		return nil, fmt.Errorf("invalid response %v", response)
 	}
-	return nil, nil
+	return response, nil
 }
 
 func (c *Contract) EncodeABI(methodName string, args ...interface{}) ([]byte, error) {
