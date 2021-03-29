@@ -33,8 +33,7 @@ func (u *Utils) FromWei(wei *big.Int) *big.Float {
 	expF.SetInt(exp)
 
 	bigval := new(big.Float)
-	bigval.SetUint64(wei.Uint64())
-
+	bigval.SetInt(wei)
 	ret := bigval.Quo(bigval, expF)
 	return ret
 }
@@ -80,7 +79,7 @@ func (u *Utils) FromWeiWithUnit(wei *big.Int, unit EtherUnit) *big.Float {
 	expF.SetInt(exp)
 
 	bigval := new(big.Float)
-	bigval.SetUint64(wei.Uint64())
+	bigval.SetInt(wei)
 
 	ret := bigval.Quo(bigval, expF)
 	return ret
