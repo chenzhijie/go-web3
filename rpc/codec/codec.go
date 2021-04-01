@@ -6,9 +6,10 @@ import (
 )
 
 type Request struct {
-	ID     uint64          `json:"id"`
-	Method string          `json:"method"`
-	Params json.RawMessage `json:"params"`
+	Version string          `json:"jsonrpc"`
+	ID      uint64          `json:"id"`
+	Method  string          `json:"method"`
+	Params  json.RawMessage `json:"params"`
 }
 
 type Response struct {

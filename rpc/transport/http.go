@@ -31,7 +31,8 @@ func (h *HTTP) Close() error {
 
 func (h *HTTP) Call(method string, out interface{}, params ...interface{}) error {
 	request := codec.Request{
-		Method: method,
+		Method:  method,
+		Version: "2.0",
 	}
 	if len(params) > 0 {
 		data, err := json.Marshal(params)
