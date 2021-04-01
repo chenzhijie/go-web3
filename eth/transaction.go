@@ -88,13 +88,13 @@ func (e *Eth) SyncSendRawTransaction(
 
 	go func() {
 		for {
-			receipt, err := e.GetTransactionReceipt(hash)
-			if err != nil && err.Error() != "not found" {
-				ch <- &ReceiptCh{
-					err: err,
-				}
-				break
-			}
+			receipt, _ := e.GetTransactionReceipt(hash)
+			// if err != nil && err.Error() != "not found" {
+			// 	ch <- &ReceiptCh{
+			// 		err: err,
+			// 	}
+			// 	break
+			// }
 			if receipt != nil {
 				ch <- &ReceiptCh{
 					ret: receipt,
