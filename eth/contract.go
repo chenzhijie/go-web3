@@ -61,6 +61,37 @@ func (c *Contract) Call(methodName string, args ...interface{}) (interface{}, er
 	return response[0], nil
 }
 
+func (c *Contract) CallWithMultiReturns(methodName string, args ...interface{}) ([]interface{}, error) {
+
+	data, err := c.EncodeABI(methodName, args...)
+
+	if err != nil {
+		return nil, err
+	}
+
+	msg := &types.CallMsg{
+		To:   c.addr,
+		Data: data,
+	}
+
+	var out string
+	if err := c.provider.Call("eth_call", &out, msg, "latest"); err != nil {
+		return nil, err
+	}
+
+	outputBytes, err := hexutil.Decode(out)
+	if err != nil {
+		return nil, err
+	}
+
+	response, err := c.abi.Unpack(methodName, outputBytes)
+	if err != nil {
+		return nil, err
+	}
+
+	return response, nil
+}
+
 func (c *Contract) CallWithFromAndValue(
 	methodName string,
 	from common.Address,
