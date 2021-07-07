@@ -12,8 +12,8 @@ type Web3 struct {
 	c     *rpc.Client
 }
 
-func NewWeb3(provider string) (*Web3, error) {
-	c, err := rpc.NewClient(provider)
+func NewWeb3(provider, proxy string) (*Web3, error) {
+	c, err := rpc.NewClient(provider, proxy)
 	if err != nil {
 		return nil, err
 	}

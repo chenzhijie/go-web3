@@ -19,12 +19,12 @@ const (
 	wssPrefix = "wss://"
 )
 
-func NewTransport(url string) (Transport, error) {
+func NewTransport(url, proxy string) (Transport, error) {
 	if strings.HasPrefix(url, wsPrefix) || strings.HasPrefix(url, wssPrefix) {
 		return newWebsocket(url)
 	}
 	if _, err := os.Stat(url); !os.IsNotExist(err) {
 		return newIPC(url)
 	}
-	return newHTTP(url), nil
+	return newHTTP(url, proxy), nil
 }

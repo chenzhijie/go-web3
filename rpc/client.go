@@ -8,10 +8,10 @@ type Client struct {
 	transport transport.Transport
 }
 
-func NewClient(addr string) (*Client, error) {
+func NewClient(addr, proxy string) (*Client, error) {
 	c := &Client{}
 
-	t, err := transport.NewTransport(addr)
+	t, err := transport.NewTransport(addr, proxy)
 	if err != nil {
 		return nil, err
 	}
