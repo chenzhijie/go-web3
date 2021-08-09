@@ -97,6 +97,12 @@ func (h *HTTP) Call(method string, out interface{}, params ...interface{}) error
 }
 
 func httpProxyDialer(proxy string, timeout time.Duration) fasthttp.DialFunc {
+	if strings.Contains(proxy, "http://") {
+		proxy = strings.TrimPrefix(proxy, "http://")
+	}
+	if strings.Contains(proxy, "https://") {
+		proxy = strings.TrimPrefix(proxy, "https://")
+	}
 	return func(addr string) (net.Conn, error) {
 		var auth string
 
