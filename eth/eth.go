@@ -182,6 +182,14 @@ func (e *Eth) ChainID() (*big.Int, error) {
 	return utils.ParseBigInt(out), nil
 }
 
+func (e *Eth) GetLogs(fliter *types.Fliter) ([]*types.Event, error) {
+	out := make([]*types.Event, 0)
+	if err := e.c.Call("eth_getLogs", &out, fliter); err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (e *Eth) EncodeParams() {
 }
 
