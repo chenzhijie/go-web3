@@ -158,7 +158,7 @@ func NewContract(abiString string, contractAddr ...string) (*Contract, error) {
 	}
 
 	var addr common.Address
-	if contractAddr != nil && len(contractAddr) == 1 {
+	if len(contractAddr) == 1 {
 		addr = common.HexToAddress(contractAddr[0])
 	}
 	c := &Contract{
@@ -170,6 +170,17 @@ func NewContract(abiString string, contractAddr ...string) (*Contract, error) {
 
 func (e *Eth) NewContract(abiString string, contractAddr ...string) (*Contract, error) {
 	c, err := NewContract(abiString, contractAddr...)
+	if err != nil {
+		return nil, err
+	}
+	c.provider = e.c
+
+	return c, nil
+}
+
+func (e *Eth) NewERC721Contract(contractAddr ...string) (*ERC721Contract, error) {
+
+	c, err := NewERC721Contract(contractAddr...)
 	if err != nil {
 		return nil, err
 	}
