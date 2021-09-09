@@ -27,7 +27,7 @@ Creates a new web3 instance with http provider.
 
 ```golang
 // change to your rpc provider
-var infuraURL = "https://mainnet.infura.io/v3/7238211010344719ad14a89db874158c"
+var infuraURL = "https://mainnet.infura.io/v3/<API-Key>"
 web3, err := web3.NewWeb3(infuraURL)
 if err != nil {
     panic(err)
@@ -63,7 +63,12 @@ web3.Eth.SetChainId(1)
 Setup default account with privateKey (hex format)
 
 ```golang
-err := web3.Eth.SetAccount("610ca682d9b48e079e9017bb000a503071a158941674d304efccc68d9b8756f9")
+pv, err := crypto.GenerateKey()
+if err != nil {
+    panic(err)
+}
+privateKey := hex.EncodeToString(crypto.FromECDSA(pv))
+err := web3.Eth.SetAccount(privateKey)
 if err != nil {
     panic(err)
 }
@@ -151,6 +156,7 @@ fmt.Printf("Send approve tx hash %v\n", txHash)
 
 - **[Chain API](./examples/chain/chain.go)**
 - **[Contract API](./examples/contract/erc20.go)**
+- **[EIP1559 API](./examples/eip1559/main.go)**
 
 ## License
 

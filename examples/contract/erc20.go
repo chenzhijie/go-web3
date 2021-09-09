@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"math/big"
+	"os"
 
 	"github.com/chenzhijie/go-web3"
 	"github.com/chenzhijie/go-web3/types"
@@ -12,15 +13,21 @@ import (
 func main() {
 
 	abiStr := `[{"constant":true,"inputs":[],"name":"name","outputs":[{"name":"","type":"string"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_spender","type":"address"},{"name":"_value","type":"uint256"}],"name":"approve","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"totalSupply","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_from","type":"address"},{"name":"_to","type":"address"},{"name":"_value","type":"uint256"}],"name":"transferFrom","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"decimals","outputs":[{"name":"","type":"uint8"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"_owner","type":"address"}],"name":"balanceOf","outputs":[{"name":"balance","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"symbol","outputs":[{"name":"","type":"string"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_to","type":"address"},{"name":"_value","type":"uint256"}],"name":"transfer","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[{"name":"_owner","type":"address"},{"name":"_spender","type":"address"}],"name":"allowance","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"anonymous":false,"inputs":[{"indexed":true,"name":"owner","type":"address"},{"indexed":true,"name":"spender","type":"address"},{"indexed":false,"name":"value","type":"uint256"}],"name":"Approval","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"name":"from","type":"address"},{"indexed":true,"name":"to","type":"address"},{"indexed":false,"name":"value","type":"uint256"}],"name":"Transfer","type":"event"}]`
-	var infuraURL = "https://kovan.infura.io/v3/"
+	// Open a terminal, and setup infura API key and ethereum privateKey to your env
+	// $ export eth_infuraKey=YourInfuraAPIKey
+	// $ export eth_privateKey=YourPrivateKey
 
-	web3, err := web3.NewWeb3(infuraURL, "")
+	// change to your rpc provider
+	var infuraURL = "https://rinkeby.infura.io/v3/" + os.Getenv("eth_infuraKey")
+
+	web3, err := web3.NewWeb3(infuraURL)
+
 	if err != nil {
 		panic(err)
 	}
-
+	web3.Eth.SetAccount(os.Getenv("eth_privateKey"))
 	// set default account by private key
-	privateKey := "610ca682d9b48e079e9017bb000a503071a158941674d304efccc68d9b8756f9"
+	privateKey := os.Getenv("eth_privateKey")
 	kovanChainId := int64(42)
 	if err := web3.Eth.SetAccount(privateKey); err != nil {
 		panic(err)

@@ -76,8 +76,6 @@ func (h *HTTP) Call(method string, out interface{}, params ...interface{}) error
 	req.Header.SetContentType("application/json")
 	req.SetBody(raw)
 
-	// fmt.Printf("req body %s\n", raw)
-
 	if err := h.client.Do(req, res); err != nil {
 		return err
 	}
@@ -105,7 +103,6 @@ func httpProxyDialer(proxy string, timeout time.Duration) fasthttp.DialFunc {
 	}
 	return func(addr string) (net.Conn, error) {
 		var auth string
-
 		if strings.Contains(proxy, "@") {
 			split := strings.Split(proxy, "@")
 			auth = base64.StdEncoding.EncodeToString([]byte(split[0]))
@@ -123,7 +120,6 @@ func httpProxyDialer(proxy string, timeout time.Duration) fasthttp.DialFunc {
 			req += "Proxy-Authorization: Basic " + auth + "\r\n"
 		}
 		req += "\r\n"
-
 		if _, err := conn.Write([]byte(req)); err != nil {
 			return nil, err
 		}
