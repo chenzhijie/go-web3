@@ -38,6 +38,16 @@ func (u *Utils) FromWei(wei *big.Int) *big.Float {
 	return ret
 }
 
+func (u *Utils) FromWeiFloat(wei *big.Float) *big.Float {
+	exp := new(big.Int).Exp(big.NewInt(10), big.NewInt(18), nil)
+	expF := new(big.Float)
+	expF.SetInt(exp)
+
+	bigval := new(big.Float)
+	ret := bigval.Quo(wei, expF)
+	return ret
+}
+
 func (u *Utils) ToWei(val float64) *big.Int {
 	bigval := new(big.Float)
 	bigval.SetFloat64(val)
