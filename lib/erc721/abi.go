@@ -1,11 +1,6 @@
-package eth
+package erc721
 
-import (
-	"fmt"
-	"math/big"
-)
-
-const ERC721ABI = `[
+const ERC721_ABI = `[
 	{
 		"inputs": [],
 		"stateMutability": "nonpayable",
@@ -398,32 +393,3 @@ const ERC721ABI = `[
 		"type": "function"
 	}
 ]`
-
-type ERC721Contract struct {
-	*Contract
-}
-
-func NewERC721Contract(address ...string) (*ERC721Contract, error) {
-	contr, err := NewContract(ERC721ABI, address...)
-	if err != nil {
-		return nil, err
-	}
-
-	erc721 := &ERC721Contract{
-		Contract: contr,
-	}
-
-	return erc721, nil
-}
-
-func (e *ERC721Contract) TotalSupply() (*big.Int, error) {
-	ret, err := e.Contract.Call("totalSupply")
-	if err != nil {
-		return nil, err
-	}
-	supply, ok := ret.(*big.Int)
-	if !ok {
-		return nil, fmt.Errorf("invalid response %v type %T expect *big.Int", ret, ret)
-	}
-	return supply, nil
-}

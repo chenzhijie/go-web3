@@ -177,14 +177,3 @@ func (e *Eth) NewContract(abiString string, contractAddr ...string) (*Contract, 
 
 	return c, nil
 }
-
-func (e *Eth) NewERC721Contract(contractAddr ...string) (*ERC721Contract, error) {
-
-	c, err := NewERC721Contract(contractAddr...)
-	if err != nil {
-		return nil, err
-	}
-	c.provider = e.c
-
-	return c, nil
-}
