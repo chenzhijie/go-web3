@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"math/big"
+	"strconv"
 
 	"github.com/ethereum/go-ethereum/common"
 )
@@ -124,11 +125,49 @@ func (u *Utils) ToDecimals(val uint64, decimals int64) *big.Int {
 }
 
 func (u *Utils) SameAddress(a, b common.Address) bool {
-	return bytes.Compare(a[:], b[:]) == 0
+	return bytes.Equal(a[:], b[:])
 }
 
 func (u *Utils) DifferentAddress(a, b common.Address) bool {
-	return bytes.Compare(a[:], b[:]) != 0
+	return !bytes.Equal(a[:], b[:])
+}
+
+func (u *Utils) RoundNWei(wei *big.Int, n int) (*big.Int, error) {
+	af := u.FromWei(wei)
+	aff, _ := af.Float64()
+
+	roundfs := ""
+	if n > 6 {
+		return nil, fmt.Errorf("round n not support bigger than 6")
+	}
+	switch n {
+	case 1:
+		roundfs = fmt.Sprintf("%.1f", aff)
+
+	case 2:
+		roundfs = fmt.Sprintf("%.2f", aff)
+
+	case 3:
+		roundfs = fmt.Sprintf("%.3f", aff)
+
+	case 4:
+		roundfs = fmt.Sprintf("%.4f", aff)
+
+	case 5:
+		roundfs = fmt.Sprintf("%.5f", aff)
+
+	case 6:
+		roundfs = fmt.Sprintf("%.6f", aff)
+
+	}
+
+	roundf, err := strconv.ParseFloat(roundfs, 64)
+	if err != nil {
+		return nil, err
+	}
+	r := u.ToWei(roundf)
+
+	return r, nil
 }
 
 // Ether converts a value to the ether unit with 18 decimals

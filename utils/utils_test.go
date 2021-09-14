@@ -87,3 +87,15 @@ func BenchmarkTestCompare4(b *testing.B) {
 		}
 	}
 }
+
+func TestRoundNWei(t *testing.T) {
+
+	u := Utils{}
+	v := u.ToWei(0.073229374492)
+	fmt.Printf(" %v\n", v)
+	ret, err := u.RoundNWei(v, 5)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Printf("ret %v\n", ret)
+}
