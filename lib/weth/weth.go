@@ -15,9 +15,10 @@ import (
 )
 
 type WETH struct {
-	contr        *eth.Contract
-	w3           *web3.Web3
-	confirmation int
+	contr         *eth.Contract
+	w3            *web3.Web3
+	confirmation  int
+	txPollTimeout int
 }
 
 func NewWETH(w3 *web3.Web3, contractAddress common.Address) (*WETH, error) {
@@ -26,14 +27,19 @@ func NewWETH(w3 *web3.Web3, contractAddress common.Address) (*WETH, error) {
 		return nil, err
 	}
 	e := &WETH{
-		contr: contr,
-		w3:    w3,
+		contr:         contr,
+		w3:            w3,
+		txPollTimeout: 720,
 	}
 	return e, nil
 }
 
 func (e *WETH) SetConfirmation(blockCount int) {
 	e.confirmation = blockCount
+}
+
+func (e *WETH) SetTxPollTimeout(txPollTimeout int) {
+	e.txPollTimeout = txPollTimeout
 }
 
 func (e *WETH) Allowance(owner, spender common.Address) (*big.Int, error) {
@@ -193,9 +199,9 @@ func (e *WETH) SyncSendRawTransactionForTx(
 		}
 
 		return result.ret, nil
-	case <-time.After(time.Duration(720) * time.Second):
+	case <-time.After(time.Duration(e.txPollTimeout) * time.Second):
 		atomic.StoreInt32(&timeoutFlag, 1)
-		return nil, fmt.Errorf("transaction was not mined within %v seconds, please make sure your transaction was properly sent. Be aware that it might still be mined!", 720)
+		return nil, fmt.Errorf("transaction was not mined within %v seconds, please make sure your transaction was properly sent. Be aware that it might still be mined!", e.txPollTimeout)
 	}
 }
 
@@ -250,9 +256,9 @@ func (e *WETH) SyncSendEIP1559Tx(
 		}
 
 		return result.ret, nil
-	case <-time.After(time.Duration(720) * time.Second):
+	case <-time.After(time.Duration(e.txPollTimeout) * time.Second):
 		atomic.StoreInt32(&timeoutFlag, 1)
-		return nil, fmt.Errorf("transaction was not mined within %v seconds, please make sure your transaction was properly sent. Be aware that it might still be mined!", 720)
+		return nil, fmt.Errorf("transaction was not mined within %v seconds, please make sure your transaction was properly sent. Be aware that it might still be mined!", e.txPollTimeout)
 	}
 }
 

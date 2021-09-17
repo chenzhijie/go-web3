@@ -15,9 +15,10 @@ import (
 )
 
 type ERC20 struct {
-	contr        *eth.Contract
-	w3           *web3.Web3
-	confirmation int
+	contr         *eth.Contract
+	w3            *web3.Web3
+	confirmation  int
+	txPollTimeout int
 }
 
 func NewERC20(w3 *web3.Web3, contractAddress common.Address) (*ERC20, error) {
@@ -26,14 +27,19 @@ func NewERC20(w3 *web3.Web3, contractAddress common.Address) (*ERC20, error) {
 		return nil, err
 	}
 	e := &ERC20{
-		contr: contr,
-		w3:    w3,
+		contr:         contr,
+		w3:            w3,
+		txPollTimeout: 720,
 	}
 	return e, nil
 }
 
 func (e *ERC20) SetConfirmation(blockCount int) {
 	e.confirmation = blockCount
+}
+
+func (e *ERC20) SetTxPollTimeout(txPollTimeout int) {
+	e.txPollTimeout = txPollTimeout
 }
 
 func (e *ERC20) Allowance(owner, spender common.Address) (*big.Int, error) {
@@ -171,10 +177,10 @@ func (e *ERC20) SyncSendRawTransactionForTx(
 		}
 
 		return result.ret, nil
-	case <-time.After(time.Duration(720) * time.Second):
+	case <-time.After(time.Duration(e.txPollTimeout) * time.Second):
 		atomic.StoreInt32(&timeoutFlag, 1)
 		return nil, fmt.Errorf("transaction was not mined within %v seconds, "+
-			"please make sure your transaction was properly sent. Be aware that it might still be mined!", 720)
+			"please make sure your transaction was properly sent. Be aware that it might still be mined!", e.txPollTimeout)
 	}
 }
 
@@ -229,10 +235,10 @@ func (e *ERC20) SyncSendEIP1559Tx(
 		}
 
 		return result.ret, nil
-	case <-time.After(time.Duration(720) * time.Second):
+	case <-time.After(time.Duration(e.txPollTimeout) * time.Second):
 		atomic.StoreInt32(&timeoutFlag, 1)
 		return nil, fmt.Errorf("transaction was not mined within %v seconds, "+
-			"please make sure your transaction was properly sent. Be aware that it might still be mined!", 720)
+			"please make sure your transaction was properly sent. Be aware that it might still be mined!", e.txPollTimeout)
 	}
 }
 
