@@ -42,6 +42,10 @@ func (e *WETH) SetTxPollTimeout(txPollTimeout int) {
 	e.txPollTimeout = txPollTimeout
 }
 
+func (e *WETH) EncodeABI(methodName string, args ...interface{}) ([]byte, error) {
+	return e.contr.EncodeABI(methodName, args...)
+}
+
 func (e *WETH) Allowance(owner, spender common.Address) (*big.Int, error) {
 
 	ret, err := e.contr.Call("allowance", owner, spender)
