@@ -36,7 +36,7 @@ func (c *Contract) Call(methodName string, args ...interface{}) (interface{}, er
 		return nil, err
 	}
 
-	msg := &types.CallMsg{
+	msg := &types.ZeroValueCallMsg{
 		To:   c.addr,
 		Data: data,
 	}
