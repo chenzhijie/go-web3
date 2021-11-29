@@ -65,6 +65,15 @@ func (u *Utils) ToWei(val float64) *big.Int {
 	return result
 }
 
+func (u *Utils) ToWeiInt(val int64, denominator int64) *big.Int {
+	bigval := big.NewInt(val)
+	exp := new(big.Int).Exp(big.NewInt(10), big.NewInt(18), nil)
+
+	result := bigval.Mul(bigval, exp)
+	result = big.NewInt(1).Div(result, big.NewInt(denominator))
+	return result
+}
+
 func (u *Utils) FromWeiWithUnit(wei *big.Int, unit EtherUnit) *big.Float {
 	unitInt := 0
 	switch unit {
