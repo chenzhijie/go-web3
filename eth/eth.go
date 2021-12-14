@@ -10,6 +10,7 @@ import (
 	"github.com/chenzhijie/go-web3/rpc"
 	"github.com/chenzhijie/go-web3/types"
 	"github.com/chenzhijie/go-web3/utils"
+	"github.com/ethereum/go-ethereum/accounts/abi"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/common/hexutil"
 	"github.com/ethereum/go-ethereum/crypto"
@@ -316,6 +317,23 @@ func (e *Eth) EstimateFee() (*EstimateFee, error) {
 		MaxFeePerGas:         maxFeePerGas,
 	}
 	return fee, nil
+}
+
+func (e *Eth) DecodeParameters(parameters []string, data []byte) ([]interface{}, error) {
+
+	args := make(abi.Arguments, 0)
+
+	for _, p := range parameters {
+		arg := abi.Argument{}
+		var err error
+		arg.Type, err = abi.NewType(p, "", nil)
+		if err != nil {
+			return nil, err
+		}
+		args = append(args, arg)
+	}
+
+	return args.Unpack(data)
 }
 
 func getBaseFeeMultiplier(baseFee *big.Int) *big.Int {
