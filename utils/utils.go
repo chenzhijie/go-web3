@@ -49,6 +49,17 @@ func (u *Utils) FromWeiFloat(wei *big.Float) *big.Float {
 	return ret
 }
 
+func (u *Utils) FromDecimals(wei *big.Int, decimals int64) *big.Float {
+	exp := new(big.Int).Exp(big.NewInt(10), big.NewInt(decimals), nil)
+	expF := new(big.Float)
+	expF.SetInt(exp)
+
+	bigval := new(big.Float)
+	bigval.SetInt(wei)
+	ret := bigval.Quo(bigval, expF)
+	return ret
+}
+
 func (u *Utils) ToWei(val float64) *big.Int {
 	bigval := new(big.Float)
 	bigval.SetFloat64(val)

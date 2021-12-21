@@ -56,6 +56,19 @@ func (e *ERC20) Allowance(owner, spender common.Address) (*big.Int, error) {
 	return allow, nil
 }
 
+func (e *ERC20) Decimals() (uint8, error) {
+	ret, err := e.contr.Call("decimals")
+	if err != nil {
+		return 0, err
+	}
+
+	decimals, ok := ret.(uint8)
+	if !ok {
+		return 0, fmt.Errorf("invalid result %v, type %T", ret, ret)
+	}
+	return decimals, nil
+}
+
 func (e *ERC20) BalanceOf(owner common.Address) (*big.Int, error) {
 
 	ret, err := e.contr.Call("balanceOf", owner)
