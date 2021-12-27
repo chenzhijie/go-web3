@@ -336,6 +336,23 @@ func (e *Eth) DecodeParameters(parameters []string, data []byte) ([]interface{},
 	return args.Unpack(data)
 }
 
+func (e *Eth) EncodeParameters(parameters []string, data []interface{}) ([]byte, error) {
+
+	args := make(abi.Arguments, 0)
+
+	for _, p := range parameters {
+		arg := abi.Argument{}
+		var err error
+		arg.Type, err = abi.NewType(p, "", nil)
+		if err != nil {
+			return nil, err
+		}
+		args = append(args, arg)
+	}
+
+	return args.Pack(data...)
+}
+
 func getBaseFeeMultiplier(baseFee *big.Int) *big.Int {
 	u := utils.Utils{}
 	if baseFee.Cmp(u.ToGWei(40)) <= 0 {
