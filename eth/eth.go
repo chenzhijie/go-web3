@@ -10,7 +10,6 @@ import (
 	"github.com/chenzhijie/go-web3/rpc"
 	"github.com/chenzhijie/go-web3/types"
 	"github.com/chenzhijie/go-web3/utils"
-	"github.com/ethereum/go-ethereum/accounts/abi"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/common/hexutil"
 	"github.com/ethereum/go-ethereum/crypto"
@@ -29,12 +28,14 @@ type Eth struct {
 	address       common.Address
 	chainId       *big.Int
 	txPollTimeout int
+	utils         *utils.Utils
 }
 
 // Create a eth instance
 func NewEth(c *rpc.Client) *Eth {
 	return &Eth{
-		c: c,
+		c:     c,
+		utils: &utils.Utils{},
 	}
 }
 
@@ -101,6 +102,11 @@ func (e *Eth) GetBlockHeaderByNumber(number *big.Int, full bool) (*eTypes.Header
 		return nil, err
 	}
 	return head, nil
+}
+
+// Get block header by block number
+func (e *Eth) GetBlocByNumber(number *big.Int, full bool) (*eTypes.Block, error) {
+	return e.getBlock("eth_getBlockByNumber", toBlockNumArg(number), full)
 }
 
 // Get block by block hash
@@ -320,37 +326,11 @@ func (e *Eth) EstimateFee() (*EstimateFee, error) {
 }
 
 func (e *Eth) DecodeParameters(parameters []string, data []byte) ([]interface{}, error) {
-
-	args := make(abi.Arguments, 0)
-
-	for _, p := range parameters {
-		arg := abi.Argument{}
-		var err error
-		arg.Type, err = abi.NewType(p, "", nil)
-		if err != nil {
-			return nil, err
-		}
-		args = append(args, arg)
-	}
-
-	return args.Unpack(data)
+	return e.utils.DecodeParameters(parameters, data)
 }
 
 func (e *Eth) EncodeParameters(parameters []string, data []interface{}) ([]byte, error) {
-
-	args := make(abi.Arguments, 0)
-
-	for _, p := range parameters {
-		arg := abi.Argument{}
-		var err error
-		arg.Type, err = abi.NewType(p, "", nil)
-		if err != nil {
-			return nil, err
-		}
-		args = append(args, arg)
-	}
-
-	return args.Pack(data...)
+	return e.utils.EncodeParameters(parameters, data)
 }
 
 func getBaseFeeMultiplier(baseFee *big.Int) *big.Int {
