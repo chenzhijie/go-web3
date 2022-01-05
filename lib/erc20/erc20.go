@@ -34,6 +34,10 @@ func NewERC20(w3 *web3.Web3, contractAddress common.Address) (*ERC20, error) {
 	return e, nil
 }
 
+func (e *ERC20) Address() common.Address {
+	return e.contr.Address()
+}
+
 func (e *ERC20) SetConfirmation(blockCount int) {
 	e.confirmation = blockCount
 }

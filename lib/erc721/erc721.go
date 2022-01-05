@@ -34,6 +34,10 @@ func NewERC721(w3 *web3.Web3, contractAddress common.Address) (*ERC721, error) {
 	return e, nil
 }
 
+func (e *ERC721) Address() common.Address {
+	return e.contr.Address()
+}
+
 func (e *ERC721) SetConfirmation(blockCount int) {
 	e.confirmation = blockCount
 }
@@ -52,6 +56,33 @@ func (e *ERC721) TotalSupply() (*big.Int, error) {
 		return nil, fmt.Errorf("invalid response %v type %T expect *big.Int", ret, ret)
 	}
 	return supply, nil
+}
+
+func (e *ERC721) BalanceOf(owner common.Address) (*big.Int, error) {
+
+	ret, err := e.contr.Call("balanceOf", owner)
+	if err != nil {
+		return nil, err
+	}
+
+	bal, ok := ret.(*big.Int)
+	if !ok {
+		return nil, fmt.Errorf("invalid result %v, type %T", ret, ret)
+	}
+	return bal, nil
+}
+
+func (e *ERC721) OwnerOf(tokenId *big.Int) (common.Address, error) {
+	ret, err := e.contr.Call("ownerOf", tokenId)
+	if err != nil {
+		return common.Address{}, err
+	}
+
+	owner, ok := ret.(common.Address)
+	if !ok {
+		return common.Address{}, fmt.Errorf("invalid result %v, type %T", ret, ret)
+	}
+	return owner, nil
 }
 
 func (e *ERC721) SetApprovalForAll(
