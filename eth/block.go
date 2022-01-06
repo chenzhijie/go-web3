@@ -2,6 +2,7 @@ package eth
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 
 	"github.com/ethereum/go-ethereum"
@@ -28,14 +29,14 @@ func (e *Eth) getBlock(method string, args ...interface{}) (*types.Block, error)
 	var head *types.Header
 	var body rpcBlock
 	if err := json.Unmarshal(raw, &head); err != nil {
-		fmt.Println("unmarshal head err")
 		return nil, err
 	}
 	if err := json.Unmarshal(raw, &body); err != nil {
-		fmt.Printf("unmarshal body err %s\n", raw)
 		return nil, err
 	}
-	// fmt.Printf("to %v\n", body.Transactions[0].To())
+	if head == nil {
+		return nil, errors.New("nil header")
+	}
 	if head.UncleHash == types.EmptyUncleHash && len(body.UncleHashes) > 0 {
 		return nil, fmt.Errorf("server returned non-empty uncle list but block header indicates no uncles")
 	}
