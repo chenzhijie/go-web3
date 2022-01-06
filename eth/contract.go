@@ -56,7 +56,7 @@ func (c *Contract) Call(methodName string, args ...interface{}) (interface{}, er
 		return nil, err
 	}
 	if len(response) != 1 {
-		return nil, fmt.Errorf("invalid response %v", response)
+		return response, nil
 	}
 	return response[0], nil
 }
