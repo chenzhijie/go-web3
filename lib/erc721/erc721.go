@@ -85,6 +85,18 @@ func (e *ERC721) OwnerOf(tokenId *big.Int) (common.Address, error) {
 	return owner, nil
 }
 
+func (e *ERC721) IsApprovedForAll(owner, operator common.Address) (bool, error) {
+	ret, err := e.contr.Call("isApprovedForAll", owner, operator)
+	if err != nil {
+		return false, err
+	}
+	approved, ok := ret.(bool)
+	if !ok {
+		return false, fmt.Errorf("invalid response type %T", ret)
+	}
+	return approved, nil
+}
+
 func (e *ERC721) SetApprovalForAll(
 	spender common.Address,
 	approve bool,

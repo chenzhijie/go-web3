@@ -7,7 +7,7 @@ import (
 )
 
 func TestSubsrice(t *testing.T) {
-	client, err := NewClient("wss://mainnet.infura.io/ws/v3/", "")
+	client, err := NewClient("https://rpc.flashbots.net", "")
 	if err != nil {
 		t.Fatal(err)
 	}
