@@ -1,6 +1,7 @@
 package eth
 
 import (
+	"bytes"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -23,6 +24,8 @@ func (e *Eth) getBlock(method string, args ...interface{}) (*types.Block, error)
 		return nil, err
 	} else if len(raw) == 0 {
 		return nil, ethereum.NotFound
+	} else if bytes.Equal([]byte(raw), []byte("null")) {
+		return nil, ethereum.NotFound
 	}
 
 	// Decode header and transactions.
@@ -35,7 +38,7 @@ func (e *Eth) getBlock(method string, args ...interface{}) (*types.Block, error)
 		return nil, err
 	}
 	if head == nil {
-		return nil, errors.New("nil header")
+		return nil, errors.New("json.Unmarshal header failed")
 	}
 	if head.UncleHash == types.EmptyUncleHash && len(body.UncleHashes) > 0 {
 		return nil, fmt.Errorf("server returned non-empty uncle list but block header indicates no uncles")
