@@ -5,6 +5,9 @@ import (
 	"testing"
 
 	"github.com/chenzhijie/go-web3/rpc"
+	"github.com/chenzhijie/go-web3/types"
+	"github.com/chenzhijie/go-web3/utils"
+	"github.com/ethereum/go-ethereum/common"
 )
 
 func TestContractCall(t *testing.T) {
@@ -66,4 +69,23 @@ func TestContractCall(t *testing.T) {
 		t.Fatal(err)
 	}
 	fmt.Printf("decimals %v, type %T\n", decimals, decimals)
+}
+
+func TestCallWithMethodSignature(t *testing.T) {
+	web3Utils := &utils.Utils{}
+	methodSignature := web3Utils.EncodeFunctionSignature("factory()")
+	c, err := rpc.NewClient("https://emerald.oasis.dev", "http://127.0.0.1:7890")
+	if err != nil {
+		t.Fatal(err)
+	}
+	e := NewEth(c)
+	result, err := e.Call(&types.CallMsg{
+		To:   common.HexToAddress("0x250d48C5E78f1E85F7AB07FEC61E93ba703aE668"),
+		Data: methodSignature,
+	}, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	addr := common.HexToAddress(result)
+	fmt.Printf("addr %v, type %T\n", addr, result)
 }

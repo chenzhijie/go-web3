@@ -28,9 +28,13 @@ func TestFromWei(t *testing.T) {
 
 func TestSignMethod(t *testing.T) {
 
-	funcName := "transfer(address,uint256)"
+	funcName := "freeMint()"
 	id := crypto.Keccak256([]byte(funcName))[:4]
-	fmt.Printf("id %x\n", id)
+	fmt.Printf("id 0x%x\n", id)
+
+	funcName = "mint()"
+	id = crypto.Keccak256([]byte(funcName))[:4]
+	fmt.Printf("id 0x%x\n", id)
 }
 
 func TestSameAddr(t *testing.T) {
