@@ -112,6 +112,21 @@ func (e *ERC721) SetApprovalForAll(
 	return e.invokeAndWait(code, gasPrice, gasTipCap, gasFeeCap)
 }
 
+func (e *ERC721) TransferFrom(
+	from common.Address,
+	to common.Address,
+	tokenId *big.Int,
+	gasPrice *big.Int,
+	gasTipCap *big.Int,
+	gasFeeCap *big.Int,
+) (common.Hash, error) {
+	code, err := e.contr.EncodeABI("transferFrom", from, to, tokenId)
+	if err != nil {
+		return common.Hash{}, err
+	}
+	return e.invokeAndWait(code, gasPrice, gasTipCap, gasFeeCap)
+}
+
 func (e *ERC721) IsApprovalForAll(owner, spender common.Address) (bool, error) {
 	ret, err := e.contr.Call("isApprovedForAll", owner, spender)
 	if err != nil {
