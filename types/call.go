@@ -32,6 +32,7 @@ type CallMsg struct {
 	From     common.Address `json:"from,omitempty"`
 	To       common.Address `json:"to"`
 	Data     CallMsgData    `json:"data"`
+	Gas      CallMsgBigInt  `json:"gas,omitempty"`
 	GasPrice CallMsgBigInt  `json:"gasPrice,omitempty"`
 	Value    CallMsgBigInt  `json:"value,omitempty"`
 }
