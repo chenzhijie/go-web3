@@ -25,10 +25,10 @@ type FlashBot struct {
 }
 
 // NewFlashBot, init flashbot instance
-// rpcRequestSigner: private key for signing request message
 // providerURL: flashbot provider http url
+// rpcRequestSigner: private key for signing request message
 // proxyAddr: http proxy or socks5 proxy addr
-func NewFlashBot(rpcRequestSigner, providerURL string) (*FlashBot, error) {
+func NewFlashBot(providerURL, rpcRequestSigner string) (*FlashBot, error) {
 
 	signerKeyData, err := hex.DecodeString(strings.TrimPrefix(rpcRequestSigner, "0x"))
 	if err != nil {
