@@ -57,6 +57,14 @@ func (e *Eth) SetAccount(privateKey string) error {
 	return nil
 }
 
+func (e *Eth) GetPrivateKey() *ecdsa.PrivateKey {
+	return e.privateKey
+}
+
+func (e *Eth) GetChainId() *big.Int {
+	return e.chainId
+}
+
 // Setup current network chainId
 func (e *Eth) SetChainId(chainId int64) {
 	e.chainId = big.NewInt(chainId)

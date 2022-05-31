@@ -23,6 +23,10 @@ type HTTP struct {
 	client *fasthttp.Client
 }
 
+func NewHTTP(addr, proxy string) *HTTP {
+	return newHTTP(addr, proxy)
+}
+
 func newHTTP(addr, proxy string) *HTTP {
 	if len(proxy) == 0 {
 		return &HTTP{
@@ -92,6 +96,14 @@ func (h *HTTP) Call(method string, out interface{}, params ...interface{}) error
 		return err
 	}
 	return nil
+}
+
+func (h *HTTP) Do(req *fasthttp.Request, res *fasthttp.Response) ([]byte, error) {
+	if err := h.client.Do(req, res); err != nil {
+		return nil, err
+	}
+
+	return res.Body(), nil
 }
 
 func httpProxyDialer(proxy string, timeout time.Duration) fasthttp.DialFunc {

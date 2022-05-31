@@ -12,6 +12,45 @@ import (
 	"github.com/ethereum/go-ethereum/rlp"
 )
 
+func (e *Eth) NewEIP1559Tx(
+	to common.Address,
+	amount *big.Int,
+	gasLimit uint64,
+	gasTipCap *big.Int,
+	gasFeeCap *big.Int,
+	data []byte,
+	nonce uint64,
+) (*eTypes.Transaction, error) {
+
+	dynamicFeeTx := &eTypes.DynamicFeeTx{
+
+		Nonce:     nonce,
+		GasTipCap: gasTipCap,
+		GasFeeCap: gasFeeCap,
+		Gas:       gasLimit,
+		To:        &to,
+		Value:     amount,
+		Data:      data,
+	}
+	if e.chainId != nil {
+		dynamicFeeTx.ChainID = e.chainId
+	}
+
+	if e.privateKey == nil {
+		return eTypes.NewTx(dynamicFeeTx), nil
+	}
+
+	signedTx, err := eTypes.SignNewTx(
+		e.privateKey,
+		eTypes.LatestSignerForChainID(e.chainId),
+		dynamicFeeTx,
+	)
+	if err != nil {
+		return nil, err
+	}
+	return signedTx, nil
+}
+
 func (e *Eth) SendRawEIP1559Transaction(
 	to common.Address,
 	amount *big.Int,

@@ -39,6 +39,17 @@ func (u *Utils) FromWei(wei *big.Int) *big.Float {
 	return ret
 }
 
+func (u *Utils) FromGWei(wei *big.Int) *big.Float {
+	exp := new(big.Int).Exp(big.NewInt(10), big.NewInt(9), nil)
+	expF := new(big.Float)
+	expF.SetInt(exp)
+
+	bigval := new(big.Float)
+	bigval.SetInt(wei)
+	ret := bigval.Quo(bigval, expF)
+	return ret
+}
+
 func (u *Utils) FromWeiFloat(wei *big.Float) *big.Float {
 	exp := new(big.Int).Exp(big.NewInt(10), big.NewInt(18), nil)
 	expF := new(big.Float)
