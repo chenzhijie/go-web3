@@ -70,6 +70,7 @@ func main() {
 		From: web3.Eth.Address(),
 		To:   tokenAddress,
 		Data: approveInputData,
+		Gas:  types.NewCallMsgBigInt(big.NewInt(types.MAX_GAS_LIMIT)),
 	}
 	// fmt.Printf("call %v\n", call)
 	gasLimit, err := web3.Eth.EstimateGas(call)

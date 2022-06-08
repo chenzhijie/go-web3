@@ -143,6 +143,7 @@ func (e *ERC721) EstimateGasLimit(to common.Address, data []byte, gasPrice, wei 
 	call := &types.CallMsg{
 		To:    to,
 		Data:  data,
+		Gas:   types.NewCallMsgBigInt(big.NewInt(types.MAX_GAS_LIMIT)),
 		Value: types.NewCallMsgBigInt(wei),
 	}
 	if gasPrice != nil {

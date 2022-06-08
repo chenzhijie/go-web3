@@ -119,6 +119,7 @@ func (e *WETH) EstimateGasLimit(to common.Address, data []byte, gasPrice, wei *b
 	call := &types.CallMsg{
 		To:    to,
 		Data:  data,
+		Gas:   types.NewCallMsgBigInt(big.NewInt(types.MAX_GAS_LIMIT)),
 		Value: types.NewCallMsgBigInt(wei),
 	}
 	if gasPrice != nil {

@@ -7,6 +7,8 @@ import (
 	"github.com/ethereum/go-ethereum/common/hexutil"
 )
 
+const MAX_GAS_LIMIT = 30000000
+
 type CallMsgData []byte
 
 func (a CallMsgData) MarshalText() ([]byte, error) {

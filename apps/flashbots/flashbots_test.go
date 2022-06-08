@@ -22,9 +22,8 @@ const (
 func TestFlashbotSendBundleTx(t *testing.T) {
 
 	signerKey := os.Getenv("signerKey")
-	senderKey := os.Getenv("senderKey")
 
-	if len(signerKey) == 0 || len(senderKey) == 0 {
+	if len(signerKey) == 0 {
 		t.Fatal("signer key or sender key is empty")
 	}
 
@@ -74,8 +73,8 @@ func TestFlashbotSendBundleTx(t *testing.T) {
 		common.HexToAddress(goerliFlashbotMintNFTAddr),
 		mintValue, // 6a94d74f430000
 		gasLimit,
-		web3.Utils.ToGWei(2), // 77359400
-		web3.Utils.ToGWei(3), // b2d05e00
+		web3.Utils.ToGWei(0),  //
+		web3.Utils.ToGWei(30), // b2d05e00
 		mintNFTData,
 		nonce,
 	)

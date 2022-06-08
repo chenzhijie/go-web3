@@ -72,6 +72,7 @@ func (c *Contract) CallWithMultiReturns(methodName string, args ...interface{}) 
 	msg := &types.CallMsg{
 		To:   c.addr,
 		Data: data,
+		Gas:  types.NewCallMsgBigInt(big.NewInt(types.MAX_GAS_LIMIT)),
 	}
 
 	var out string
@@ -109,6 +110,7 @@ func (c *Contract) CallWithFromAndValue(
 		From: from,
 		To:   c.addr,
 		Data: data,
+		Gas:  types.NewCallMsgBigInt(big.NewInt(types.MAX_GAS_LIMIT)),
 	}
 	if value != nil {
 		msg.Value = types.NewCallMsgBigInt(value)
