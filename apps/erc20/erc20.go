@@ -73,6 +73,19 @@ func (e *ERC20) Decimals() (uint8, error) {
 	return decimals, nil
 }
 
+func (e *ERC20) Symbol() (string, error) {
+	ret, err := e.contr.Call("symbol")
+	if err != nil {
+		return "", err
+	}
+
+	symbol, ok := ret.(string)
+	if !ok {
+		return "", fmt.Errorf("invalid result %v, type %T", ret, ret)
+	}
+	return symbol, nil
+}
+
 func (e *ERC20) BalanceOf(owner common.Address) (*big.Int, error) {
 
 	ret, err := e.contr.Call("balanceOf", owner)

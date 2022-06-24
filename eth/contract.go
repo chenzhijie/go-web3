@@ -19,6 +19,14 @@ type Contract struct {
 	provider *rpc.Client
 }
 
+func (c *Contract) AllMethods() []string {
+	methodNames := make([]string, 0)
+	for methodName := range c.abi.Methods {
+		methodNames = append(methodNames, methodName)
+	}
+	return methodNames
+}
+
 func (c *Contract) Methods(methodName string) abi.Method {
 	m, _ := c.abi.Methods[methodName]
 	return m

@@ -29,6 +29,9 @@ func NewUtils() *Utils {
 }
 
 func (u *Utils) FromWei(wei *big.Int) *big.Float {
+	if wei == nil {
+		return big.NewFloat(0)
+	}
 	exp := new(big.Int).Exp(big.NewInt(10), big.NewInt(18), nil)
 	expF := new(big.Float)
 	expF.SetInt(exp)
@@ -40,6 +43,9 @@ func (u *Utils) FromWei(wei *big.Int) *big.Float {
 }
 
 func (u *Utils) FromGWei(wei *big.Int) *big.Float {
+	if wei == nil {
+		return big.NewFloat(0)
+	}
 	exp := new(big.Int).Exp(big.NewInt(10), big.NewInt(9), nil)
 	expF := new(big.Float)
 	expF.SetInt(exp)
@@ -51,6 +57,9 @@ func (u *Utils) FromGWei(wei *big.Int) *big.Float {
 }
 
 func (u *Utils) FromWeiFloat(wei *big.Float) *big.Float {
+	if wei == nil {
+		return big.NewFloat(0)
+	}
 	exp := new(big.Int).Exp(big.NewInt(10), big.NewInt(18), nil)
 	expF := new(big.Float)
 	expF.SetInt(exp)
@@ -61,6 +70,9 @@ func (u *Utils) FromWeiFloat(wei *big.Float) *big.Float {
 }
 
 func (u *Utils) FromDecimals(wei *big.Int, decimals int64) *big.Float {
+	if wei == nil {
+		return big.NewFloat(0)
+	}
 	exp := new(big.Int).Exp(big.NewInt(10), big.NewInt(decimals), nil)
 	expF := new(big.Float)
 	expF.SetInt(exp)
@@ -97,6 +109,9 @@ func (u *Utils) ToWeiInt(val int64, denominator int64) *big.Int {
 }
 
 func (u *Utils) FromWeiWithUnit(wei *big.Int, unit EtherUnit) *big.Float {
+	if wei == nil {
+		return big.NewFloat(0)
+	}
 	unitInt := 0
 	switch unit {
 	case EtherUnitNoEther:
