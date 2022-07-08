@@ -22,7 +22,6 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	web3.Eth.SetAccount(os.Getenv("eth_privateKey"))
 	// set default account by private key
 	privateKey := os.Getenv("eth_privateKey")
 	kovanChainId := int64(42)
