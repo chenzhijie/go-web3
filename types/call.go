@@ -22,21 +22,21 @@ func (a CallMsgBigInt) MarshalText() ([]byte, error) {
 	return []byte(hexutil.EncodeBig(&b)), nil
 }
 
-func NewCallMsgBigInt(v *big.Int) CallMsgBigInt {
+func NewCallMsgBigInt(v *big.Int) *CallMsgBigInt {
 	if v == nil {
-		return CallMsgBigInt(*big.NewInt(0))
+		return nil
 	}
-	i := *v
-	return CallMsgBigInt(i)
+	i := CallMsgBigInt(*v)
+	return &i
 }
 
 type CallMsg struct {
 	From     common.Address `json:"from,omitempty"`
 	To       common.Address `json:"to"`
 	Data     CallMsgData    `json:"data"`
-	Gas      CallMsgBigInt  `json:"gas,omitempty"`
-	GasPrice CallMsgBigInt  `json:"gasPrice,omitempty"`
-	Value    CallMsgBigInt  `json:"value,omitempty"`
+	Gas      *CallMsgBigInt `json:"gas,omitempty"`
+	GasPrice *CallMsgBigInt `json:"gasPrice,omitempty"`
+	Value    *CallMsgBigInt `json:"value,omitempty"`
 }
 
 type ZeroValueCallMsg struct {
