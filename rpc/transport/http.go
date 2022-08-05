@@ -62,6 +62,7 @@ func (h *HTTP) Call(method string, out interface{}, params ...interface{}) error
 		if err != nil {
 			return err
 		}
+		// fmt.Printf("data %s\n", data)
 		request.Params = data
 	}
 	raw, err := json.Marshal(request)

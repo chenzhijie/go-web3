@@ -14,8 +14,8 @@ func main() {
 
 	// change to your rpc provider
 	var chainId = int64(97)
-	var rpcProvider = "https://data-seed-prebsc-1-s1.binance.org:8545"
-	web3, err := web3.NewWeb3(rpcProvider)
+	var rpcProvider = "https://data-seed-prebsc-2-s3.binance.org:8545/"
+	web3, err := web3.NewWeb3WithProxy(rpcProvider, os.Getenv("http_proxy"))
 	if err != nil {
 		panic(err)
 	}
@@ -27,7 +27,7 @@ func main() {
 	fmt.Println("Current block number: ", blockNumber)
 
 	// only for test
-	privateKey := os.Getenv("testPrivateKey") // hex string format
+	privateKey := "" // hex string format
 	if len(privateKey) == 0 {
 		panic("please replace to your privateKey and keep safe by yourself")
 	}
