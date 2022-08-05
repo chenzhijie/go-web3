@@ -36,6 +36,10 @@ func (c *Contract) Address() common.Address {
 	return c.addr
 }
 
+func (c *Contract) SetProvider(provider *rpc.Client) {
+	c.provider = provider
+}
+
 func (c *Contract) Call(methodName string, args ...interface{}) (interface{}, error) {
 
 	data, err := c.EncodeABI(methodName, args...)
