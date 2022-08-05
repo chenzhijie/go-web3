@@ -233,6 +233,14 @@ func (e *Eth) ChainID() (*big.Int, error) {
 	return utils.ParseBigInt(out), nil
 }
 
+func (e *Eth) GetRawChainID() (*big.Int, error) {
+	var out string
+	if err := e.c.Call("eth_chainId", &out); err != nil {
+		return nil, err
+	}
+	return utils.ParseBigInt(out), nil
+}
+
 // Get past event logs with fliter
 func (e *Eth) GetLogs(fliter *types.Fliter) ([]*types.Event, error) {
 	out := make([]*types.Event, 0)
