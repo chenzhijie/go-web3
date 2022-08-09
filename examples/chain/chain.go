@@ -3,11 +3,10 @@ package main
 import (
 	"fmt"
 
-	"github.com/chenzhijie/go-web3"
+	"github.com/dashiqiao/go-web3"
 )
 
 func main() {
-
 
 	// change to your rpc provider
 	var rpcProvider = "https://rpc.flashbots.net"

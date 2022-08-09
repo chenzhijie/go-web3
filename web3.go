@@ -3,9 +3,9 @@ package web3
 import (
 	"strings"
 
-	"github.com/chenzhijie/go-web3/eth"
-	"github.com/chenzhijie/go-web3/rpc"
-	"github.com/chenzhijie/go-web3/utils"
+	"github.com/dashiqiao/go-web3/eth"
+	"github.com/dashiqiao/go-web3/rpc"
+	"github.com/dashiqiao/go-web3/utils"
 )
 
 type Web3 struct {
