@@ -122,6 +122,41 @@ func (e *Eth) SendRawTransaction(
 
 }
 
+func (e *Eth) SendRawTransactionNonce(
+	to common.Address,
+	amount *big.Int,
+	gasLimit uint64,
+	gasPrice *big.Int,
+	data []byte,
+	random uint64,
+) (common.Hash, error) {
+	nonce, err := e.GetNonce(e.address, nil)
+	nonce += random
+	var hash common.Hash
+	if err != nil {
+		return hash, err
+	}
+	// fmt.Printf("nonce %v\n", nonce)
+
+	tx := eTypes.NewTransaction(nonce, to, amount, gasLimit, gasPrice, data)
+
+	// fmt.Println(tx)
+	signedTx, err := eTypes.SignTx(tx, eTypes.NewEIP155Signer(e.chainId), e.privateKey)
+	if err != nil {
+		return hash, err
+	}
+	// fmt.Println("signTx", signedTx)
+	serializedTx, err := rlp.EncodeToBytes(signedTx)
+	if err != nil {
+		return hash, err
+	}
+	// fmt.Printf("serializedTx 0x%x\n", serializedTx)
+
+	err = e.c.Call("eth_sendRawTransaction", &hash, fmt.Sprintf("0x%x", serializedTx))
+	return hash, err
+
+}
+
 func (e *Eth) SyncSendRawTransaction(
 	to common.Address,
 	amount *big.Int,
