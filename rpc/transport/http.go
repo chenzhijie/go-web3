@@ -87,14 +87,14 @@ func (h *HTTP) Call(method string, out interface{}, params ...interface{}) error
 
 	var response codec.Response
 	if err := json.Unmarshal(res.Body(), &response); err != nil {
-		return err
+		return fmt.Errorf("json unmarshal response body %s err %s", res.Body(), err)
 	}
 	if response.Error != nil {
 		return response.Error
 	}
 
 	if err := json.Unmarshal(response.Result, out); err != nil {
-		return err
+		return fmt.Errorf("json unmarshal response result %s err %s", res.Body(), err)
 	}
 	return nil
 }
