@@ -96,11 +96,24 @@ func (e *Eth) SendRawTransaction(
 	gasPrice *big.Int,
 	data []byte,
 ) (common.Hash, error) {
-	nonce, err := e.GetNonce(e.address, nil)
 	var hash common.Hash
+	nonce, err := e.GetNonce(e.address, nil)
 	if err != nil {
 		return hash, err
 	}
+
+	return e.FastSendRawTransaction(to, nonce, amount, gasLimit, gasPrice, data)
+}
+
+func (e *Eth) FastSendRawTransaction(
+	to common.Address,
+	nonce uint64,
+	amount *big.Int,
+	gasLimit uint64,
+	gasPrice *big.Int,
+	data []byte,
+) (common.Hash, error) {
+	var hash common.Hash
 	// fmt.Printf("nonce %v\n", nonce)
 
 	tx := eTypes.NewTransaction(nonce, to, amount, gasLimit, gasPrice, data)

@@ -226,7 +226,7 @@ func (e *Eth) ChainID() (*big.Int, error) {
 	if e.chainId != nil {
 		return e.chainId, nil
 	}
-	return GetRawChainID()
+	return e.GetRawChainID()
 }
 
 func (e *Eth) GetRawChainID() (*big.Int, error) {
