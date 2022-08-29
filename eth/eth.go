@@ -70,6 +70,10 @@ func (e *Eth) SetChainId(chainId int64) {
 	e.chainId = big.NewInt(chainId)
 }
 
+func (e *Eth) GetProvider() *rpc.Client {
+	return e.c
+}
+
 // Setup timeout for polling confirmation from txs (unit second)
 func (e *Eth) SetTxPollTimeout(timeout int) {
 	if timeout == 0 {
@@ -222,6 +226,10 @@ func (e *Eth) ChainID() (*big.Int, error) {
 	if e.chainId != nil {
 		return e.chainId, nil
 	}
+	return e.GetRawChainID()
+}
+
+func (e *Eth) GetRawChainID() (*big.Int, error) {
 	var out string
 	if err := e.c.Call("eth_chainId", &out); err != nil {
 		return nil, err
