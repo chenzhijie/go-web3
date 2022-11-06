@@ -3,6 +3,7 @@ package utils
 import (
 	"bytes"
 	"fmt"
+	"math/big"
 	"testing"
 
 	"github.com/ethereum/go-ethereum/common"
@@ -10,15 +11,39 @@ import (
 )
 
 func TestToWei(t *testing.T) {
-	ethVal := 0.003
 	u := NewUtils()
-	wei := u.ToWei(ethVal)
-	fmt.Printf("wei %v\n", wei)
-	fmt.Printf("wei hex %v\n", u.ToHex(wei))
+	values := []string{
+		"12",
+		"1",
+		"1.0",
+		"13.1111111111111111",
+		"13.111111111111111111",
+		"0.141",
+		"13.1111111111111111111", // wrong
+	}
+	expects := []string{
+		"12000000000000000000",
+		"1000000000000000000",
+		"1000000000000000000",
+		"13111111111111111100",
+		"13111111111111111111",
+		"141000000000000000",
+		"0",
+	}
+	for i, val := range values {
+		bigVal, ok := big.NewInt(0).SetString(expects[i], 10)
+		if !ok {
+			t.Fatal(fmt.Sprintf("convert %s failed", val))
+		}
+		if !bytes.Equal(u.ToWei(val).Bytes(), bigVal.Bytes()) {
+			t.Fatal(fmt.Sprintf("%s and %s not equal", val, bigVal))
+		}
+	}
+
 }
 
 func TestFromWei(t *testing.T) {
-	ethVal := 0.00000001
+	ethVal := "0.00000001"
 	u := NewUtils()
 	wei := u.ToWei(ethVal)
 	fmt.Printf("wei %v\n", wei)
@@ -95,7 +120,7 @@ func BenchmarkTestCompare4(b *testing.B) {
 func TestRoundNWei(t *testing.T) {
 
 	u := Utils{}
-	v := u.ToWei(0.073229374492)
+	v := u.ToWei("0.073229374492")
 	fmt.Printf(" %v\n", v)
 	ret, err := u.RoundNWei(v, 5)
 	if err != nil {

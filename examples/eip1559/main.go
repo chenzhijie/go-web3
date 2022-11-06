@@ -32,8 +32,19 @@ func main() {
 	fmt.Printf("max fee per gas %v, %.3f Gwei\n", fee.MaxFeePerGas, util.FromWeiWithUnit(fee.MaxFeePerGas, utils.EtherUnitGWei))
 
 	fmt.Println("current account ", web3.Eth.Address())
-
-	receipt, err := web3.Eth.SyncSendEIP1559RawTransaction(web3.Eth.Address(), util.ToWei(0.01), 21000, fee.MaxPriorityFeePerGas, fee.MaxFeePerGas, nil)
+	nonce, err := web3.Eth.GetNonce(web3.Eth.Address(), nil)
+	if err != nil {
+		panic(err)
+	}
+	receipt, err := web3.Eth.SyncSendEIP1559RawTransaction(
+		web3.Eth.Address(),
+		util.ToWei("0.01"),
+		nonce,
+		21000,
+		fee.MaxPriorityFeePerGas,
+		fee.MaxFeePerGas,
+		nil,
+	)
 	if err != nil {
 		panic(err)
 	}

@@ -51,10 +51,14 @@ func main() {
 		panic(err)
 	}
 	fmt.Printf("MATIC balance %v\n", maticBalance)
-
+	nonce, err := web3.Eth.GetNonce(web3.Eth.Address(), nil)
+	if err != nil {
+		panic(err)
+	}
 	tx, err := web3.Eth.SyncSendEIP1559RawTransaction(
 		addr,
-		web3.Utils.ToWei(0.1),
+		web3.Utils.ToWei("0.1"),
+		nonce,
 		21000,
 		web3.Utils.ToGWei(25),
 		web3.Utils.ToGWei(325),

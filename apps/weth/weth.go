@@ -161,7 +161,11 @@ func (e *WETH) WaitBlock(blockCount uint64) error {
 func (e *WETH) SyncSendRawTransactionForTx(
 	gasPrice *big.Int, gasLimit uint64, to common.Address, data []byte, wei *big.Int,
 ) (*eTypes.Receipt, error) {
-	hash, err := e.w3.Eth.SendRawTransaction(to, wei, gasLimit, gasPrice, data)
+	nonce, err := e.w3.Eth.GetNonce(e.w3.Eth.Address(), nil)
+	if err != nil {
+		return nil, err
+	}
+	hash, err := e.w3.Eth.SendRawTransaction(to, wei, nonce, gasLimit, gasPrice, data)
 	if err != nil {
 		return nil, err
 	}
@@ -218,7 +222,11 @@ func (e *WETH) SyncSendEIP1559Tx(
 	data []byte,
 	wei *big.Int,
 ) (*eTypes.Receipt, error) {
-	hash, err := e.w3.Eth.SendRawEIP1559Transaction(to, wei, gasLimit, gasTipCap, gasFeeCap, data)
+	nonce, err := e.w3.Eth.GetNonce(e.w3.Eth.Address(), nil)
+	if err != nil {
+		return nil, err
+	}
+	hash, err := e.w3.Eth.SendRawEIP1559Transaction(to, wei, nonce, gasLimit, gasTipCap, gasFeeCap, data)
 	if err != nil {
 		return nil, err
 	}

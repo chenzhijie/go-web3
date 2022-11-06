@@ -45,7 +45,7 @@ func TestFlashbotSendBundleTx(t *testing.T) {
 	}
 	fmt.Printf("currentBlockNumber %v\n", currentBlockNumber)
 
-	mintValue := web3.Utils.ToWei(0.03)
+	mintValue := web3.Utils.ToWei("0.03")
 
 	mintNFTData, err := hex.DecodeString("1249c58b")
 	if err != nil {

@@ -10,11 +10,13 @@ import (
 	"github.com/chenzhijie/go-web3/rpc"
 	"github.com/chenzhijie/go-web3/types"
 	"github.com/chenzhijie/go-web3/utils"
+	"github.com/ethereum/go-ethereum/accounts"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/common/hexutil"
 	"github.com/ethereum/go-ethereum/crypto"
 
 	eTypes "github.com/ethereum/go-ethereum/core/types"
+	"github.com/ethereum/go-ethereum/signer/core/apitypes"
 )
 
 const (
@@ -339,6 +341,55 @@ func (e *Eth) DecodeParameters(parameters []string, data []byte) ([]interface{},
 
 func (e *Eth) EncodeParameters(parameters []string, data []interface{}) ([]byte, error) {
 	return e.utils.EncodeParameters(parameters, data)
+}
+
+// SignText signs raw text message
+// keccak256("\x19Ethereum Signed Message:\n"${message length}${message}).
+func (e *Eth) SignText(data []byte) ([]byte, error) {
+	hashData := accounts.TextHash(data)
+	signature, err := crypto.Sign(hashData, e.privateKey)
+	if err != nil {
+		return nil, err
+	}
+	if signature[64] == 0 || signature[64] == 1 {
+		signature[64] += 27 // Transform V from 0/1 to 27/28 according to the yellow paper
+	}
+	return signature, nil
+}
+
+// SignTypedData signs EIP-712 conformant typed data
+// hash = keccak256("\x19${byteVersion}${domainSeparator}${hashStruct(message)}")
+// It returns
+// - the signature,
+// - and/or any error
+func (e *Eth) SignTypedData(data apitypes.TypedData) ([]byte, error) {
+	if e.privateKey == nil {
+		return nil, fmt.Errorf("please setup private key before signing")
+	}
+	domainSeparator, err := data.HashStruct("EIP712Domain", data.Domain.Map())
+	if err != nil {
+		return nil, err
+	}
+
+	typedDataHash, err := data.HashStruct(data.PrimaryType, data.Message)
+	if err != nil {
+		return nil, err
+	}
+
+	rawData := []byte(fmt.Sprintf("\x19\x01%s%s", string(domainSeparator), string(typedDataHash)))
+
+	sighash := crypto.Keccak256(rawData)
+
+	signature, err := crypto.Sign(sighash, e.privateKey)
+	if err != nil {
+		return nil, err
+	}
+
+	if signature[64] == 0 || signature[64] == 1 {
+		signature[64] += 27 // Transform V from 0/1 to 27/28 according to the yellow paper
+	}
+
+	return signature, nil
 }
 
 func getBaseFeeMultiplier(baseFee *big.Int) *big.Int {

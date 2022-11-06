@@ -58,7 +58,7 @@ func main() {
 	}
 
 	fmt.Printf("Allowance is %v\n", allowance)
-	approveInputData, err := contract.Methods("approve").Inputs.Pack("0x0000000000000000000000000000000000000002", web3.Utils.ToWei(0.2))
+	approveInputData, err := contract.Methods("approve").Inputs.Pack("0x0000000000000000000000000000000000000002", web3.Utils.ToWei("0.2"))
 	if err != nil {
 		panic(err)
 	}
@@ -78,10 +78,14 @@ func main() {
 		panic(err)
 	}
 	fmt.Printf("Estimate gas limit %v\n", gasLimit)
-
+	nonce, err := web3.Eth.GetNonce(web3.Eth.Address(), nil)
+	if err != nil {
+		panic(err)
+	}
 	txHash, err := web3.Eth.SyncSendRawTransaction(
 		common.HexToAddress(tokenAddr),
 		big.NewInt(0),
+		nonce,
 		gasLimit,
 		web3.Utils.ToGWei(1),
 		approveInputData,

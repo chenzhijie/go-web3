@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"math/big"
-	"strconv"
+	"strings"
 
 	"github.com/ethereum/go-ethereum/common"
 )
@@ -21,6 +21,17 @@ const (
 	EtherUnitFinney
 	EtherUnitEther
 )
+
+var unitMap = map[EtherUnit]string{
+	EtherUnitNoEther: "0",
+	EtherUnitWei:     "1",
+	EtherUnitKWei:    "1000",
+	EtherUnitMWei:    "1000000",
+	EtherUnitGWei:    "1000000000",
+	EtherUnitSzabo:   "1000000000000",
+	EtherUnitFinney:  "1000000000000000",
+	EtherUnitEther:   "1000000000000000000",
+}
 
 type Utils struct{}
 
@@ -83,20 +94,41 @@ func (u *Utils) FromDecimals(wei *big.Int, decimals int64) *big.Float {
 	return ret
 }
 
-func (u *Utils) ToWei(val float64) *big.Int {
-	bigval := new(big.Float)
-	bigval.SetFloat64(val)
-	exp := new(big.Int).Exp(big.NewInt(10), big.NewInt(18), nil)
+func (u *Utils) ToWei(val string) *big.Int {
 
-	expF := new(big.Float)
-	expF.SetInt(exp)
+	if !strings.Contains(val, ".") {
+		whole, ok := big.NewInt(0).SetString(val, 10)
+		if !ok {
+			return big.NewInt(0)
+		}
+		return big.NewInt(1).Mul(whole, big.NewInt(1e18))
+	}
+	comps := strings.Split(val, ".")
+	if len(comps) != 2 {
+		return big.NewInt(0)
+	}
 
-	bigval.Mul(bigval, expF)
+	whole := comps[0]
+	fraction := comps[1]
+	baseLength := len(unitMap[EtherUnitEther]) - 1
+	fractionLength := len(fraction)
+	if fractionLength > baseLength {
+		return big.NewInt(0)
+	}
+	fraction += strings.Repeat("0", baseLength-fractionLength)
+	wholeInt, ok := big.NewInt(0).SetString(whole, 10)
+	if !ok {
+		return big.NewInt(0)
+	}
+	fractionInt, ok := big.NewInt(0).SetString(fraction, 10)
+	if !ok {
+		return big.NewInt(0)
+	}
 
-	result := new(big.Int)
-	bigval.Int(result) // store converted number in result
+	wholeMulBase := big.NewInt(1).Mul(wholeInt, big.NewInt(1e18))
+	wholeAddFraction := big.NewInt(1).Add(wholeMulBase, fractionInt)
 
-	return result
+	return wholeAddFraction
 }
 
 func (u *Utils) ToWeiInt(val int64, denominator int64) *big.Int {
@@ -207,11 +239,7 @@ func (u *Utils) RoundNWei(wei *big.Int, n int) (*big.Int, error) {
 
 	}
 
-	roundf, err := strconv.ParseFloat(roundfs, 64)
-	if err != nil {
-		return nil, err
-	}
-	r := u.ToWei(roundf)
+	r := u.ToWei(roundfs)
 
 	return r, nil
 }
