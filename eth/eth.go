@@ -108,7 +108,7 @@ func (e *Eth) GetBlockNumber() (uint64, error) {
 // Get block header by block number
 func (e *Eth) GetBlockHeaderByNumber(number *big.Int, full bool) (*eTypes.Header, error) {
 	var head *eTypes.Header
-	if err := e.c.Call("eth_getBlockByNumber", &head, toBlockNumArg(number), full); err != nil {
+	if err := e.c.Call("eth_getBlockByNumber", &head, utils.ToBlockNumArg(number), full); err != nil {
 		return nil, err
 	}
 	return head, nil
@@ -116,7 +116,7 @@ func (e *Eth) GetBlockHeaderByNumber(number *big.Int, full bool) (*eTypes.Header
 
 // Get block header by block number
 func (e *Eth) GetBlocByNumber(number *big.Int, full bool) (*eTypes.Block, error) {
-	return e.getBlock("eth_getBlockByNumber", toBlockNumArg(number), full)
+	return e.getBlock("eth_getBlockByNumber", utils.ToBlockNumArg(number), full)
 }
 
 // Get block by block hash
@@ -152,7 +152,7 @@ func (e *Eth) GetTransactionReceipt(hash common.Hash) (*eTypes.Receipt, error) {
 // Get nonce of account
 func (e *Eth) GetNonce(addr common.Address, blockNumber *big.Int) (uint64, error) {
 	var nonce string
-	if err := e.c.Call("eth_getTransactionCount", &nonce, addr, toBlockNumArg(blockNumber)); err != nil {
+	if err := e.c.Call("eth_getTransactionCount", &nonce, addr, utils.ToBlockNumArg(blockNumber)); err != nil {
 		return 0, err
 	}
 	return utils.ParseUint64orHex(nonce)
@@ -161,7 +161,7 @@ func (e *Eth) GetNonce(addr common.Address, blockNumber *big.Int) (uint64, error
 // Get ether balance of account
 func (e *Eth) GetBalance(addr common.Address, blockNumber *big.Int) (*big.Int, error) {
 	var out string
-	if err := e.c.Call("eth_getBalance", &out, addr, toBlockNumArg(blockNumber)); err != nil {
+	if err := e.c.Call("eth_getBalance", &out, addr, utils.ToBlockNumArg(blockNumber)); err != nil {
 		return nil, err
 	}
 	b, ok := new(big.Int).SetString(out[2:], 16)
@@ -183,7 +183,7 @@ func (e *Eth) GasPrice() (uint64, error) {
 // Get fee history for EIP1559 blocks
 func (e *Eth) FeeHistory(historicalBlocks int, blockNumber *big.Int, feeHistoryPercentile []float64) (*types.FeeHistory, error) {
 	var out *types.FeeHistory
-	if err := e.c.Call("eth_feeHistory", &out, historicalBlocks, toBlockNumArg(blockNumber), feeHistoryPercentile); err != nil {
+	if err := e.c.Call("eth_feeHistory", &out, historicalBlocks, utils.ToBlockNumArg(blockNumber), feeHistoryPercentile); err != nil {
 		return nil, err
 	}
 	return out, nil
@@ -192,7 +192,7 @@ func (e *Eth) FeeHistory(historicalBlocks int, blockNumber *big.Int, feeHistoryP
 // Do Call functions
 func (e *Eth) Call(msg *types.CallMsg, block *big.Int) (string, error) {
 	var out string
-	if err := e.c.Call("eth_call", &out, msg, toBlockNumArg(block)); err != nil {
+	if err := e.c.Call("eth_call", &out, msg, utils.ToBlockNumArg(block)); err != nil {
 		return "", err
 	}
 	return out, nil
@@ -404,15 +404,4 @@ func getBaseFeeMultiplier(baseFee *big.Int) *big.Int {
 		return big.NewInt(14)
 	}
 	return big.NewInt(12)
-}
-
-func toBlockNumArg(number *big.Int) string {
-	if number == nil {
-		return "latest"
-	}
-	pending := big.NewInt(-1)
-	if number.Cmp(pending) == 0 {
-		return "pending"
-	}
-	return hexutil.EncodeBig(number)
 }

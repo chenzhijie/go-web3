@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/common/hexutil"
 )
 
 type EtherUnit int
@@ -253,4 +254,16 @@ func convert(val uint64, decimals int64) *big.Int {
 	v := big.NewInt(int64(val))
 	exp := new(big.Int).Exp(big.NewInt(10), big.NewInt(decimals), nil)
 	return v.Mul(v, exp)
+}
+
+// ToBlockNumArg. Wrap blockNumber arg from big.Int to string
+func ToBlockNumArg(number *big.Int) string {
+	if number == nil {
+		return "latest"
+	}
+	pending := big.NewInt(-1)
+	if number.Cmp(pending) == 0 {
+		return "pending"
+	}
+	return hexutil.EncodeBig(number)
 }

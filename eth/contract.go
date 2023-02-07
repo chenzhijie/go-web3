@@ -8,6 +8,7 @@ import (
 
 	"github.com/chenzhijie/go-web3/rpc"
 	"github.com/chenzhijie/go-web3/types"
+	"github.com/chenzhijie/go-web3/utils"
 	"github.com/ethereum/go-ethereum/accounts/abi"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/common/hexutil"
@@ -70,6 +71,10 @@ func (c *Contract) Call(methodName string, args ...interface{}) (interface{}, er
 }
 
 func (c *Contract) CallWithMultiReturns(methodName string, args ...interface{}) ([]interface{}, error) {
+	return c.CallAtWithMultiReturns(nil, methodName, args...)
+}
+
+func (c *Contract) CallAtWithMultiReturns(blockNumber *big.Int, methodName string, args ...interface{}) ([]interface{}, error) {
 
 	data, err := c.EncodeABI(methodName, args...)
 
@@ -84,7 +89,7 @@ func (c *Contract) CallWithMultiReturns(methodName string, args ...interface{}) 
 	}
 
 	var out string
-	if err := c.provider.Call("eth_call", &out, msg, "latest"); err != nil {
+	if err := c.provider.Call("eth_call", &out, msg, utils.ToBlockNumArg(blockNumber)); err != nil {
 		return nil, err
 	}
 
