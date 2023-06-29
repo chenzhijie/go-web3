@@ -357,6 +357,18 @@ func (e *Eth) SignText(data []byte) ([]byte, error) {
 	return signature, nil
 }
 
+// EcSign signs raw hash message
+func (e *Eth) EcSign(hashData []byte) ([]byte, error) {
+	signature, err := crypto.Sign(hashData, e.privateKey)
+	if err != nil {
+		return nil, err
+	}
+	if signature[64] == 0 || signature[64] == 1 {
+		signature[64] += 27 // Transform V from 0/1 to 27/28 according to the yellow paper
+	}
+	return signature, nil
+}
+
 // SignTypedData signs EIP-712 conformant typed data
 // hash = keccak256("\x19${byteVersion}${domainSeparator}${hashStruct(message)}")
 // It returns
