@@ -78,5 +78,8 @@ func (e *Eth) getBlock(method string, args ...interface{}) (*types.Block, error)
 	// 	}
 	// }
 	// Fill the sender cache of transactions in the block.
-	return types.NewBlockWithHeader(head).WithBody(body.Transactions, uncles), nil
+	return types.NewBlockWithHeader(head).WithBody(types.Body{
+		Transactions: body.Transactions,
+		Uncles:       uncles,
+	}), nil
 }
