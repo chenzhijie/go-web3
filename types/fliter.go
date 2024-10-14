@@ -19,19 +19,23 @@ type Fliter struct {
 }
 
 type Event struct {
-	Address         common.Address `json:"address"`
-	BlockHash       common.Hash    `json:"blockHash"`
-	BlockNumber     string         `json:"blockNumber"`
-	Topics          []string       `json:"topics,omitempty"`
-	TransactionHash common.Hash    `json:"transactionHash"`
-	Data            string         `json:"data,omitempty"`
+	Address          common.Address `json:"address"`
+	BlockHash        common.Hash    `json:"blockHash"`
+	BlockNumber      string         `json:"blockNumber"`
+	Topics           []string       `json:"topics,omitempty"`
+	TransactionHash  common.Hash    `json:"transactionHash"`
+	Data             string         `json:"data,omitempty"`
+	LogIndex         string         `json:"logIndex,omitempty"`
+	TransactionIndex string         `json:"transactionIndex,omitempty"`
 }
 
 type EventData struct {
-	Address         common.Address `json:"address"`
-	BlockHash       common.Hash    `json:"blockHash"`
-	BlockNumber     string         `json:"blockNumber"`
-	Topics          [][]byte       `json:"topics,omitempty"`
-	TransactionHash common.Hash    `json:"transactionHash"`
-	Data            []byte         `json:"data,omitempty"`
+	Address          common.Address `json:"address"`
+	BlockHash        common.Hash    `json:"blockHash"`
+	BlockNumber      string         `json:"blockNumber"`
+	Topics           [][]byte       `json:"topics,omitempty"`
+	TransactionHash  common.Hash    `json:"transactionHash"`
+	Data             []byte         `json:"data,omitempty"`
+	LogIndex         string         `json:"logIndex,omitempty"`
+	TransactionIndex string         `json:"transactionIndex,omitempty"`
 }
