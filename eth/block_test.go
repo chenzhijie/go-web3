@@ -19,7 +19,7 @@ func TestGetBlockByNumber(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	block, err := eth.GetBlocByNumber(big.NewInt(int64(blockNumber)), true)
+	block, err := eth.GetBlockByNumber(big.NewInt(int64(blockNumber)), true)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -38,7 +38,7 @@ func TestPollBlock(t *testing.T) {
 			t.Fatal(err)
 		}
 		fmt.Printf("get block %v\n", blockNumber)
-		block, err := eth.GetBlocByNumber(big.NewInt(int64(blockNumber)), true)
+		block, err := eth.GetBlockByNumber(big.NewInt(int64(blockNumber)), true)
 		if err != nil {
 			t.Fatal(err)
 		}

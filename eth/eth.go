@@ -114,9 +114,23 @@ func (e *Eth) GetBlockHeaderByNumber(number *big.Int, full bool) (*eTypes.Header
 	return head, nil
 }
 
-// Get block header by block number
-func (e *Eth) GetBlocByNumber(number *big.Int, full bool) (*eTypes.Block, error) {
+// Get block header by tag
+func (e *Eth) GetBlockHeaderByTag(tag string, full bool) (*eTypes.Header, error) {
+	var head *eTypes.Header
+	if err := e.c.Call("eth_getBlockByNumber", &head, tag, full); err != nil {
+		return nil, err
+	}
+	return head, nil
+}
+
+// Get block by number
+func (e *Eth) GetBlockByNumber(number *big.Int, full bool) (*eTypes.Block, error) {
 	return e.getBlock("eth_getBlockByNumber", utils.ToBlockNumArg(number), full)
+}
+
+// Get block by tag
+func (e *Eth) GetBlockByTag(tag string, full bool) (*eTypes.Block, error) {
+	return e.getBlock("eth_getBlockByNumber", tag, full)
 }
 
 // Get block by block hash
