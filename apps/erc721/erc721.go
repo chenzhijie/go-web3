@@ -233,7 +233,7 @@ func (e *ERC721) SyncSendEIP1559Tx(
 	select {
 	case result := <-ch:
 		if result.err != nil {
-			return nil, err
+			return nil, result.err
 		}
 
 		return result.ret, nil
@@ -290,7 +290,7 @@ func (e *ERC721) SyncSendRawTransactionForTx(
 	select {
 	case result := <-ch:
 		if result.err != nil {
-			return nil, err
+			return nil, result.err
 		}
 
 		return result.ret, nil
